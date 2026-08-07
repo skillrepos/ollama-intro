@@ -1,0 +1,76 @@
+# chat_app.py - A small multi-turn chat application on the Ollama Python library.
+# Lab 5 - Introduction to Ollama
+#
+# Two things to notice:
+#   1. The library is a thin wrapper over the same REST API from Lab 4.
+#   2. Ollama does NOT remember your conversation. WE keep the history and
+#      resend it every turn. That is what makes this feel like a chat.
+
+import os
+import sys
+
+import ollama
+
+MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:3b")
+
+SYSTEM_PROMPT = (
+    "You are a concise technical assistant. "
+    "Answer in three sentences or fewer unless the user asks for more detail."
+)
+
+
+def ask(messages):
+    """Send the whole conversation to Ollama and stream the reply to the screen."""
+    reply = ""
+    stream = ollama.chat(
+        model=MODEL,
+        messages=messages,
+        stream=True,
+        options={"temperature": 0.3, "num_predict": 200},
+    )
+    for chunk in stream:
+        piece = chunk["message"]["content"]
+        print(piece, end="", flush=True)
+        reply += piece
+    print()
+    return reply
+
+
+def main():
+    print(f"Chatting with {MODEL}. Press Ctrl+C to quit.")
+    print("Try a follow-up question like 'why?' to prove it remembers.\n")
+
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nGoodbye!")
+            return
+
+        if not user_input:
+            continue
+
+        messages.append({"role": "user", "content": user_input})
+
+        print("Model: ", end="", flush=True)
+        answer = ask(messages)
+
+        # Append the model's own answer so the next turn has the full context.
+        # Comment this line out and the model forgets everything you said.
+        messages.append({"role": "assistant", "content": answer})
+
+        print(f"[history: {len(messages)} messages]\n")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except ollama.ResponseError as e:
+        print(f"\nOllama returned an error: {e.error}")
+        print(f"Is '{MODEL}' pulled? Check with: ollama list")
+        sys.exit(1)
+    except ConnectionError:
+        print("\nCould not reach Ollama. Try: bash scripts/startOllama.sh")
+        sys.exit(1)

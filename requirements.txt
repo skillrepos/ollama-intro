@@ -1,0 +1,14 @@
+# --- Core: the official Ollama Python library (Lab 3) ---
+ollama>=0.6.2
+
+# --- Raw REST access without a client library (Lab 3 / take-home Lab 6) ---
+requests>=2.32.0
+
+# --- Framework layer: LangChain's Ollama integration (Lab 3) ---
+langchain-ollama>=1.1.0
+
+# --- OpenAI-compatible endpoint demo (take-home Lab 7) ---
+openai>=1.99.0
+
+# --- Nicer terminal output in the sample apps ---
+rich>=13.7.0

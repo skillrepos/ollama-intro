@@ -1,0 +1,19 @@
+# Modelfile for our custom model: "shellcoach"
+# Lab 3 - Introduction to Ollama
+#
+# A Modelfile is a plain-text recipe. It says which base model to start from,
+# what personality/instructions to bake in, and what default parameters to use.
+# Ollama reads it with:  ollama create shellcoach -f modelfiles/Modelfile.shellcoach
+
+# The base model we are customizing. This must already be pulled locally.
+FROM llama3.2:3b
+
+# TODO 1: Add PARAMETER lines to control the model's default behavior.
+#   We want low randomness (this is a factual assistant, not a poet),
+#   a 4096-token context window, and a cap on answer length.
+
+# TODO 2: Add a SYSTEM block that gives the model its persona and rules.
+#   It should be a Linux command-line coach that always leads with the command.
+
+# TODO 3: Add MESSAGE lines to seed a short example exchange (few-shot priming)
+#   so the model copies the answer format we want.
