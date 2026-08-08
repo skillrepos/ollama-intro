@@ -19,7 +19,7 @@
         "vscode": {
             "settings": {
                 "python.terminal.activateEnvInCurrentTerminal": true,
-                "python.defaultInterpreterPath": ".venv/bin/python",
+                "python.defaultInterpreterPath": "${containerWorkspaceFolder}/py_env/bin/python",
                 "github.copilot.enable": {
                   "*": false,
                   "plaintext": false,
@@ -40,11 +40,7 @@
                  "terminal.integrated.profiles.linux": {
                      "bash": { "path": "bash", "args": ["-l"] }
                  }
-            },
-            "extensions": [
-               "mathematic.vscode-pdf",
-               "vstirbu.vscode-mermaid-preview"
-            ]
+            }
         }
     },
     "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh",
