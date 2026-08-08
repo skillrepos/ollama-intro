@@ -8,12 +8,15 @@
 # The base model we are customizing. This must already be pulled locally.
 FROM llama3.2:3b
 
-# TODO 1: Add PARAMETER lines to control the model's default behavior.
+# ==== Merge 1 of 3: default parameters ====
+# TODO: Add PARAMETER lines to control the model's default behavior.
 #   We want low randomness (this is a factual assistant, not a poet),
 #   a 4096-token context window, and a cap on answer length.
 
-# TODO 2: Add a SYSTEM block that gives the model its persona and rules.
+# ==== Merge 2 of 3: the persona ====
+# TODO: Add a SYSTEM block that gives the model its persona and rules.
 #   It should be a Linux command-line coach that always leads with the command.
 
-# TODO 3: Add MESSAGE lines to seed a short example exchange (few-shot priming)
+# ==== Merge 3 of 3: few-shot priming ====
+# TODO: Add MESSAGE lines to seed a short example exchange (few-shot priming)
 #   so the model copies the answer format we want.

@@ -112,24 +112,39 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. We can also change how the model behaves without leaving the session. *Temperature* controls randomness - low values are more deterministic and repetitive, high values are more varied and more likely to wander. Run all four commands below in order and compare the two sets of answers.
+7. We can also change how the model behaves without leaving the session. *Temperature* controls randomness - but the way to *see* that is not to compare two answers and judge which one looks "wilder." It is repeatability: ask the **same question twice** at each setting. At temperature 0 the model always picks the most likely next token, so the answer comes back word-for-word identical. At 1.5 it samples freely, so every run is different. We use `/clear` (you saw it in the step 6 menu) between asks so each one starts from a fresh context - and notice that `/clear` wipes the conversation but *keeps* your parameter setting. Run the sequence below.
 
 ```
-/set parameter temperature 0.1
+/set parameter temperature 0
 ```
 ```
-Three names for a coffee shop. Just the names.
+Write a tagline for a coffee shop. Just the tagline.
+```
+```
+/clear
+```
+```
+Write a tagline for a coffee shop. Just the tagline.
 ```
 ```
 /set parameter temperature 1.5
 ```
 ```
-Three names for a coffee shop. Just the names.
+/clear
+```
+```
+Write a tagline for a coffee shop. Just the tagline.
+```
+```
+/clear
+```
+```
+Write a tagline for a coffee shop. Just the tagline.
 ```
 
 ![Comparing temperature settings](./images/ollama10.png?raw=true "Comparing temperature settings")
 
-   This is the single most useful knob you have, and we'll bake a value for it into our own model in Lab 2.
+   The first pair should be **identical** - that is what deterministic means, and it is why low temperature matters for anything you want to test or parse. The second pair should come back different. This is the single most useful knob you have, and we'll bake a value for it into our own model in Lab 2.
 
 <br><br>
 
@@ -237,7 +252,7 @@ ollama show --modelfile llama3.2:3b
 code modelfiles/Modelfile.shellcoach
 ```
 
-   There is a `FROM` line naming our base model, and then three `TODO` comments where the real instructions belong. As written, this would create a model that behaves exactly like the plain base model. **Note: this file is incomplete - we'll merge in the working version in the next step.**
+   There is a `FROM` line naming our base model, and then three labeled sections - `Merge 1 of 3` through `Merge 3 of 3` - each holding a `TODO` where the real instructions belong. As written, this would create a model that behaves exactly like the plain base model. **Note: this file is incomplete - we'll merge in the working version in the next step.**
 
 ![The skeleton Modelfile](./images/ollama17.png?raw=true "The skeleton Modelfile")
 
@@ -249,7 +264,7 @@ code modelfiles/Modelfile.shellcoach
 code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
 
-   Once you have run the command, you'll have a side-by-side view in your editor of the completed file and the *Modelfile.shellcoach* file. You can merge each section into *Modelfile.shellcoach* by hovering over the middle bar and clicking on the arrows pointing right. Go through each section, look at what it does, and then click to merge it in, one at a time. There are three sections - make sure to merge all the changes. When you are done, **save the file** with CTRL-S (CMD-S on a Mac).
+   Once you have run the command, you'll have a side-by-side view in your editor of the completed file and the *Modelfile.shellcoach* file. The diff shows **three separate change blocks**, one per labeled section - `Merge 1 of 3` (the PARAMETER defaults), `Merge 2 of 3` (the SYSTEM persona), and `Merge 3 of 3` (the seeded MESSAGE exchange). Merge each one in turn: hover over the middle bar next to a block and click the arrow pointing right, and read what each section does before you bring it in. Make sure all three are merged. When you are done, **save the file** with CTRL-S (CMD-S on a Mac).
 
 ![Merging the completed Modelfile](./images/ollama18.png?raw=true "Merging the completed Modelfile")
 
@@ -304,6 +319,15 @@ ollama run llama3.2:3b "How do I find files modified in the last 24 hours?"
 ```
 
 ![Comparing custom model to base model](./images/ollama21.png?raw=true "Comparing custom model to base model")
+
+   What you should see, and where each difference comes from:
+
+   - **The command comes first, in a code block** - the SYSTEM rules plus the seeded MESSAGE exchange. The base model buries its command in prose, often after a paragraph of preamble.
+   - **Short and it stops** - `num_predict 160` caps the answer. The base model tends to ramble through multiple "methods," including Windows and Mac ones nobody asked about.
+   - **Same format every time** - `temperature 0.2` is baked in. Re-run the shellcoach command and the shape repeats; the base model at its default temperature varies run to run.
+   - **A `CAUTION:` line on anything destructive** - a behavior that exists only because one SYSTEM rule asked for it.
+
+   One thing that does **not** change: correctness. Both models share the exact same weights, so a mistake the base model would make (watch the `find -mtime` sign) shellcoach can make too - just more tersely. Customization buys you *behavior*, not *knowledge*.
 
 <br><br>
 

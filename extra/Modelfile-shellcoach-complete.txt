@@ -8,6 +8,7 @@
 # The base model we are customizing. This must already be pulled locally.
 FROM llama3.2:3b
 
+# ==== Merge 1 of 3: default parameters ====
 # Defaults baked into the model. Anyone who runs "ollama run shellcoach"
 # gets these without having to pass them in.
 PARAMETER temperature 0.2
@@ -16,6 +17,7 @@ PARAMETER num_ctx 4096
 PARAMETER num_predict 160
 PARAMETER repeat_penalty 1.15
 
+# ==== Merge 2 of 3: the persona ====
 # The persona and the rules. This is prepended to every conversation.
 SYSTEM """
 You are ShellCoach, a Linux command-line coach for people new to the terminal.
@@ -27,6 +29,7 @@ Rules you always follow:
 4. Never invent flags. If you are unsure, say so and suggest 'man <command>'.
 """
 
+# ==== Merge 3 of 3: few-shot priming ====
 # A seeded example exchange so the model copies the format above.
 MESSAGE user How do I find the 5 largest files under my current directory?
 MESSAGE assistant """```
