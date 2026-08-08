@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 3.3 - 08/07/26
+## Revision 3.4 - 08/08/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -555,6 +555,8 @@ ollama signin
 ollama pull gpt-oss:120b-cloud
 ```
 
+![Registering cloud model](./images/ollama41.png?raw=true "Registering cloud model")
+
 <br><br>
 
 3. Confirm what just landed. Compare the `SIZE` column for the cloud model against `llama3.2:3b` - there are no weights on your disk.
@@ -563,7 +565,7 @@ ollama pull gpt-oss:120b-cloud
 ollama list
 ```
 
-![A cloud model in the local list](./images/ollama32.png?raw=true "A cloud model in the local list")
+![A cloud model in the local list](./images/ollama42.png?raw=true "A cloud model in the local list")
 
 <br><br>
 
@@ -573,7 +575,7 @@ ollama list
 ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins."
 ```
 
-![Running a cloud-hosted model](./images/ollama33.png?raw=true "Running a cloud-hosted model")
+![Running a cloud-hosted model](./images/ollama43.png?raw=true "Running a cloud-hosted model")
 
 <br><br>
 
@@ -587,6 +589,8 @@ ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model
 ollama ps
 ```
 
+![Model ps](./images/ollama44.png?raw=true "Model ps")
+
 <br><br>
 
 7. Now the important part: **your code does not change either.** The chat application you finished in Lab 3 reads its model from an environment variable, so point it at the cloud model and run it. Ask it anything, then exit with CTRL-C.
@@ -595,7 +599,7 @@ ollama ps
 OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
 ```
 
-![The same app against a cloud model](./images/ollama34.png?raw=true "The same app against a cloud model")
+![The same app against a cloud model](./images/ollama45.png?raw=true "The same app against a cloud model")
 
    Same library, same `ollama.chat()` call, same streaming loop, same message history. Only the model name is different. This is the single strongest argument for building against Ollama's API rather than a vendor SDK - local and hosted are one line apart.
 
@@ -607,7 +611,7 @@ OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
 ollama launch --help
 ```
 
-![The launch command](./images/ollama35.png?raw=true "The launch command")
+![The launch command](./images/ollama46.png?raw=true "The launch command")
 
    You should see integrations for coding tools such as **Claude Code, OpenCode, Codex, VS Code, and Droid**. (This command needs Ollama 0.15 or later - check with `ollama --version` if you don't see it.)
 
