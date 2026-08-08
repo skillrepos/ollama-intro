@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 3.2 - 08/07/26**
+**Revision 3.3 - 08/07/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
 
@@ -30,13 +30,19 @@ The codespace is ready to use when you see the `Ready for lab exercises!` banner
 
 ![Ready to use](./images/ollama2.png?raw=true "Ready to use")
 
-**3. Open up the *labs.md* file so you can follow along with the labs.**
+**3. If VS Code shows a workspace trust prompt, click *Trust*.**
+
+The codespace may open in Restricted Mode with a banner asking whether you trust the authors
+of the files. Click **Trust** (or *Yes, I trust the authors*). Until you do, the `code -d`
+diff-and-merge steps in Labs 2 and 3 will not open.
+
+**4. Open up the *labs.md* file so you can follow along with the labs.**
 
 You can either open it in a separate browser instance or open it in the codespace. If you open it in the codespace, make sure to *Open Preview* so you can see it in Markdown form as intended.
 
 ![Opening labs](./images/ollama3.png?raw=true "Opening labs")
 
-**4. Change your codespace's default timeout from 30 minutes to 60 minutes.**
+**5. Change your codespace's default timeout from 30 minutes to 60 minutes.**
 
 When logged in to GitHub, go to https://github.com/settings/codespaces and scroll down to the *Default idle timeout* section. Set it to 60 minutes so your codespace does not shut down mid-lab.
 
@@ -87,21 +93,27 @@ No paid API keys are required. Everything in the in-class labs runs on free loca
 ## System requirements
 
 The devcontainer requests 4 CPUs / 16 GB RAM / 32 GB storage. There is no GPU in a
-codespace, so all inference is CPU-only. Expect roughly:
+codespace, so all inference is CPU-only. All figures below were measured on a real 4-core
+codespace, not estimated:
 
 | Operation | Typical time on a 4-core codespace |
 | :-- | :-- |
-| Codespace creation + setup scripts | 4 - 8 minutes |
-| `ollama pull` (per model) | 1 - 3 minutes |
-| First prompt to a cold model | 20 - 60 seconds |
-| Warm prompt to `llama3.2:1b` | 10 - 20 seconds |
-| Warm prompt to `llama3.2:3b` | 30 - 60 seconds |
+| Codespace creation + setup scripts | 10 - 12 minutes |
+| &nbsp;&nbsp;- of which: container build | 8 - 9 minutes |
+| &nbsp;&nbsp;- of which: `startup_ollama.sh` (install + pull + warm) | under 1 minute |
+| `ollama pull` (per model, ~2 GB) | 15 - 30 seconds |
+| First prompt to a cold model | 5 - 10 seconds |
+| Warm short prompt to `llama3.2:1b` | 2 - 3 seconds |
+| Warm short prompt to `llama3.2:3b` | 4 - 6 seconds |
+| Warm ~150-word answer from `llama3.2:3b` | 10 - 15 seconds |
 
-If a prompt seems to hang, it is almost always just slow CPU inference. Give it a minute.
+Generation runs at roughly **55 ms/token on the 1B and 70 ms/token on the 3B**, so answer
+length drives elapsed time far more than model choice does. If a prompt seems to hang,
+it is almost always just slow CPU inference on a long answer. Give it a minute.
 
 ### Warmup
 
-The labs default to `llama3.2:3b`. A **cold** model load costs 20 - 40 seconds on top of
+The labs default to `llama3.2:3b`. A **cold** model load costs about 5 seconds on top of
 generation, so `api/warmup.py` pre-loads the workshop models and pins them in memory:
 
 ```
@@ -156,7 +168,9 @@ run `pip install -r requirements.txt`, and start at Lab 1.
 | `Error: could not connect to ollama app` | `bash scripts/startOllama.sh` |
 | `address already in use` on 11434 | `bash scripts/shutdown_ollama.sh` then start it again |
 | `model 'x' not found` | `ollama pull x` - check spelling with `ollama list` |
-| Prompt appears frozen | CPU inference is slow. Wait 60 seconds before assuming failure. |
+| Prompt appears frozen | CPU inference is slow on long answers. Wait 60 seconds before assuming failure. |
+| `ERROR: This version requires zstd for extraction` | The base image ships without `zstd`. The setup scripts now install it automatically; if you hit this on an older codespace, run `sudo apt-get install -y zstd` then `curl -fsSL https://ollama.com/install.sh \| sh`. |
+| VS Code shows a "Restricted Mode" / workspace trust banner | Click **Trust** (or "Yes, I trust the authors"). Until you do, the `code -d` merge steps in Labs 2 and 3 will not open. |
 | First prompt very slow | The model unloaded. Run `python api/warmup.py` |
 | `ollama launch` not found | Needs Ollama 0.15+. Check `ollama --version` |
 | Codespace out of disk | `ollama rm <model>` for models you are done with |

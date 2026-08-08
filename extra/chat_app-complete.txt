@@ -1,8 +1,8 @@
 # chat_app.py - A small multi-turn chat application on the Ollama Python library.
-# Lab 5 - Introduction to Ollama
+# Lab 3 - Introduction to Ollama
 #
 # Two things to notice:
-#   1. The library is a thin wrapper over the same REST API from Lab 4.
+#   1. The library is a thin wrapper over the same REST API you just called with curl.
 #   2. Ollama does NOT remember your conversation. WE keep the history and
 #      resend it every turn. That is what makes this feel like a chat.
 
@@ -58,7 +58,9 @@ def main():
         answer = ask(messages)
 
         # Append the model's own answer so the next turn has the full context.
-        # Comment this line out and the model forgets everything you said.
+        # Comment this line out and the model loses everything *it* said (your own
+        # turns stay in the list). To see full amnesia, also change the ask() call
+        # above to:  ask([messages[0], messages[-1]])
         messages.append({"role": "assistant", "content": answer})
 
         print(f"[history: {len(messages)} messages]\n")

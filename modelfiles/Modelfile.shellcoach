@@ -1,5 +1,5 @@
 # Modelfile for our custom model: "shellcoach"
-# Lab 3 - Introduction to Ollama
+# Lab 2 - Introduction to Ollama
 #
 # A Modelfile is a plain-text recipe. It says which base model to start from,
 # what personality/instructions to bake in, and what default parameters to use.

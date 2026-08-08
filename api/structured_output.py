@@ -1,5 +1,5 @@
 # structured_output.py - Force the model to answer with valid JSON that matches a schema.
-# Lab 4 (optional) - Introduction to Ollama
+# Lab 6 - Introduction to Ollama
 #
 # This is the single most useful API feature for real applications: instead of
 # parsing prose with regexes, you hand Ollama a JSON Schema in the "format"
@@ -25,7 +25,7 @@ SCHEMA = {
         "first_released": {"type": "integer"},
         "used_for": {"type": "array", "items": {"type": "string"}},
     },
-    "required": ["name", "category", "used_for"],
+    "required": ["name", "category", "first_released", "used_for"],
 }
 
 

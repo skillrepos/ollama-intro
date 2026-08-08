@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 3.1 - 08/07/26
+## Revision 3.3 - 08/07/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -9,7 +9,7 @@
 
 **NOTE: Unless a step says otherwise, run every command from the root of the repository. You can always get back there with `cd /workspaces/ollama-intro`.**
 
-**NOTE: This is a CPU-only codespace. Prompts take time - expect 20 to 60 seconds for an answer from our default `llama3.2:3b`. That is normal, not broken. Lab 1 step 2 warms the models up so you don't pay a load penalty on top of it.**
+**NOTE: This is a CPU-only codespace. Short answers from our default `llama3.2:3b` come back in about 4 - 6 seconds once the model is warm; long answers can take 30 seconds or more, because time scales with answer length. That is normal, not broken. Lab 1 step 2 warms the models up so you don't pay a load penalty on top of it.**
 
 <br><br>
 
@@ -215,7 +215,9 @@ time ollama run llama3.2:3b "What is a vector embedding? One sentence."
 
 ![Comparing model sizes and speed](./images/ollama15.png?raw=true "Comparing model sizes and speed")
 
-   The larger model takes roughly two to three times as long. Compare both the elapsed time and the quality of the answer - **that tradeoff is model selection.** There is no ranking here, only a choice. We default to 3B for this workshop because the answers are worth the wait; a batch job over ten thousand records might well choose 1B.
+   The larger model takes roughly 30-60% longer - not the 3x you might expect from "almost three times the parameters." Here is why, and it is the most useful thing in this lab: on a CPU-only box, generation speed is set by **how many bytes have to be read per token**, not by parameter count. Look back at step 1 - the 3B is quantized to `Q4_K_M` (about 4 bits per weight) while the 1B is `Q8_0` (about 8 bits). So 3.2B x 4 bits against 1.2B x 8 bits is only about 1.3x the bytes, and that is almost exactly the slowdown you just measured.
+
+   **Quantization matters as much as parameter count.** Compare the elapsed time *and* the quality of the answer - **that tradeoff is model selection.** There is no ranking here, only a choice. We default to 3B for this workshop because the answers are nearly free at this size; a batch job over ten thousand records might still choose 1B.
 
 <br><br>
 
@@ -305,7 +307,7 @@ ollama run llama3.2:3b "How do I find files modified in the last 24 hours?"
 
 <br><br>
 
-11. Our model now has its own Modelfile, just like the downloaded ones did in step 3. Take a look - this is how you'd share a customization with a teammate. A Modelfile is a few lines of text you can put in version control; they run `ollama create` and get identical behavior.
+11. Our model now has its own Modelfile, just like the downloaded ones did in step 3. Take a look - and notice it is *not* the tidy file you wrote. Ollama has expanded it: the `FROM` line now points at a local blob path and the base model's whole `TEMPLATE` has been inlined, so this version is over 200 lines and is not portable to anyone else. **The artifact you share with a teammate is your own `modelfiles/Modelfile.shellcoach`** - a few lines of text you put in version control. They run `ollama create` and get identical behavior. What `ollama show --modelfile` gives you is the fully resolved recipe, which is useful for understanding a model you did *not* write.
 
 ```
 ollama show --modelfile shellcoach
@@ -361,8 +363,10 @@ curl -s http://localhost:11434/api/generate -d '{
   "prompt": "In two sentences, what is a REST API?",
   "stream": false,
   "options": { "temperature": 0.3, "num_predict": 60 }
-}' | python3 -m json.tool
+}' | python3 -c "import sys,json; d=json.load(sys.stdin); d.pop('context',None); print(json.dumps(d,indent=2))"
 ```
+
+   (We drop the `context` field before printing - it is a few hundred token IDs that would bury everything else. Everything you care about is still there.)
 
 ![Calling the generate endpoint](./images/ollama23.png?raw=true "Calling the generate endpoint")
 
@@ -457,7 +461,17 @@ How would I work around that?
 
 <br><br>
 
-10. Let's prove the memory claim. Open the file, comment out the `messages.append({"role": "assistant", ...})` line by putting a `#` in front of it, and save. Run it again, ask the same first question, then ask the follow-up - this time it should land with no context at all, because the model has no idea what "that" refers to. Exit with CTRL-C, then **remove the `#` and save** so the file is correct if you come back to it.
+10. Let's prove the memory claim, in two stages. First, open the file, comment out the `messages.append({"role": "assistant", ...})` line by putting a `#` in front of it, and save. Run it again and ask the same two questions. Watch the `[history: N]` counter: it now climbs by **one** per turn instead of two, because only your side of the conversation is being kept. The follow-up still half-works - the model can see the question you asked, just not the answer it gave - so it re-derives from scratch instead of building on itself.
+
+   Now for full amnesia. Change the `ask(messages)` call to send only the system prompt and your latest turn:
+
+   ```
+   answer = ask([messages[0], messages[-1]])
+   ```
+
+   Run it again and ask the same two questions. This time the follow-up lands on nothing - the model will tell you it has no idea what you are referring to. **That is what stateless actually means:** the model remembers precisely what you put in the request, and nothing else.
+
+   When you're done, **undo both edits and save** so the file is correct if you come back to it.
 
 ```
 code api/chat_app.py
@@ -662,14 +676,22 @@ ollama ps
 
 <br><br>
 
-4. Models can be copied under a new name. This is cheap - it does not duplicate the underlying weights, it just adds a new tag pointing at the same blobs. Watch the total in `ollama list` and notice it barely moves.
+4. Models can be copied under a new name. This is cheap - it does not duplicate the underlying weights, it just adds a new tag pointing at the same blobs. Note that `ollama list` will report the new tag at the *full* size of the model, which is misleading - it is reporting the size of the blobs the tag refers to, not new disk. The `du` commands below show what actually happened on disk.
 
+```
+du -sh ~/.ollama/models
+```
 ```
 ollama cp llama3.2:1b my-experiment
 ```
 ```
 ollama list
 ```
+```
+du -sh ~/.ollama/models
+```
+
+   `ollama list` gains a 1.3 GB entry. `du` does not move at all.
 
 <br><br>
 

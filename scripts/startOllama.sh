@@ -3,7 +3,18 @@
 # Makes sure the Ollama service is running without re-pulling models.
 
 if ! command -v ollama &> /dev/null; then
+    # zstd is required by the Ollama installer and is absent from the base image.
+    if ! command -v zstd &> /dev/null; then
+        sudo apt-get update -qq && sudo apt-get install -y -qq zstd
+    fi
     curl -fsSL https://ollama.com/install.sh | sh
+fi
+
+# Never report success if the install did not actually land.
+if ! command -v ollama &> /dev/null; then
+    echo "ERROR: Ollama is not installed and could not be installed automatically."
+    echo "Try:  sudo apt-get install -y zstd && curl -fsSL https://ollama.com/install.sh | sh"
+    exit 1
 fi
 
 if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then

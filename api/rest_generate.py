@@ -1,5 +1,5 @@
 # rest_generate.py - Talk to Ollama's local REST API using nothing but 'requests'.
-# Lab 4 - Introduction to Ollama
+# Lab 6 - Introduction to Ollama
 #
 # There is no Ollama library involved here on purpose. This is the raw HTTP
 # contract that every Ollama client - Python, JavaScript, LangChain, curl -

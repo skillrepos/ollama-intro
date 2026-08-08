@@ -1,5 +1,5 @@
 # Modelfile for our custom model: "shellcoach"
-# Lab 3 - Introduction to Ollama
+# Lab 2 - Introduction to Ollama
 #
 # A Modelfile is a plain-text recipe. It says which base model to start from,
 # what personality/instructions to bake in, and what default parameters to use.
@@ -29,9 +29,10 @@ Rules you always follow:
 
 # A seeded example exchange so the model copies the format above.
 MESSAGE user How do I find the 5 largest files under my current directory?
-MESSAGE assistant ```
+MESSAGE assistant """```
 du -ah . | sort -rh | head -5
 ```
 - `du -ah` reports sizes for all files, human readable
 - `sort -rh` sorts by that human-readable size, largest first
 - `head -5` keeps only the top five
+"""

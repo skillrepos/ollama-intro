@@ -1,8 +1,8 @@
 # chat_app.py - A small multi-turn chat application on the Ollama Python library.
-# Lab 5 - Introduction to Ollama
+# Lab 3 - Introduction to Ollama
 #
 # Two things to notice:
-#   1. The library is a thin wrapper over the same REST API from Lab 4.
+#   1. The library is a thin wrapper over the same REST API you just called with curl.
 #   2. Ollama does NOT remember your conversation. WE keep the history and
 #      resend it every turn. That is what makes this feel like a chat.
 #

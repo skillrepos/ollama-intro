@@ -15,8 +15,20 @@ echo "Step 1: Checking for Ollama installation..."
 if command -v ollama &> /dev/null; then
     echo "  Ollama is already installed"
 else
+    # The Ollama installer extracts a zstd-compressed tarball. The devcontainer base
+    # image does not ship zstd, and without it the install fails with
+    # "ERROR: This version requires zstd for extraction".
+    if ! command -v zstd &> /dev/null; then
+        echo "  Installing zstd (required by the Ollama installer)..."
+        sudo apt-get update -qq && sudo apt-get install -y -qq zstd
+    fi
     echo "  Installing Ollama..."
     curl -fsSL https://ollama.com/install.sh | sh
+    if ! command -v ollama &> /dev/null; then
+        echo "  ERROR: Ollama install failed - the ollama command is still not on PATH."
+        echo "  Nothing below this point will work. See the output above."
+        exit 1
+    fi
     echo "  Ollama installed"
 fi
 echo ""
