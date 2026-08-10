@@ -44,5 +44,8 @@
         }
     },
     "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh",
-    "postAttachCommand": "bash scripts/startOllama.sh"
+    // Installs the Merge Info extension (hover popups on the 'code -d' merge blocks,
+    // driven by merge-info.json at the repo root), then starts/warms Ollama.
+    // The ';' is deliberate: if the extension install fails, Ollama still starts.
+    "postAttachCommand": "code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true; bash scripts/startOllama.sh"
 }
