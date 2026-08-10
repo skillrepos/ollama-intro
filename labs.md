@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.1 - 08/10/26
+## Revision 4.3 - 08/10/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -255,7 +255,7 @@ code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 
    Once you have run the command, you'll have a side-by-side view in your editor of the completed file and the *Modelfile.shellcoach* file. The diff shows **three separate change blocks**, one per labeled section - `Merge 1 of 3` (the PARAMETER defaults), `Merge 2 of 3` (the SYSTEM persona), and `Merge 3 of 3` (the seeded MESSAGE exchange). Merge each one in turn: hover over the middle bar next to a block and click the arrow pointing right, and read what each section does before you bring it in. Make sure all three are merged. When you are done, **save the file** with CTRL-S (CMD-S on a Mac).
 
-![Merging the completed Modelfile](./images/ollama18.png?raw=true "Merging the completed Modelfile")
+![Merging the completed Modelfile](./images/ollama50.png?raw=true "Merging the completed Modelfile")
 
 <br><br>
 
