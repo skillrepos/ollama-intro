@@ -1,0 +1,54 @@
+{
+  "files": {
+    "extra/Modelfile-shellcoach-complete.txt": [
+      {
+        "anchor": "# Defaults baked into the model. Anyone who runs \"ollama run shellcoach\"",
+        "title": "Baked-in default parameters",
+        "note": [
+          "**Runtime defaults that ship inside the model, so no caller has to remember them.**",
+          "- `temperature 0.2` keeps answers consistent; `num_predict 160` caps length",
+          "- Same `num_predict` you set by hand in Lab 1 - now permanent"
+        ]
+      },
+      {
+        "anchor": "# The persona and the rules. This is prepended to every conversation.",
+        "lines": 10,
+        "title": "The persona and its rules",
+        "note": [
+          "**Four output rules the model follows on every request, without the user asking.**",
+          "- Command first in a code block, then at most three bullets",
+          "- Rule 3 (`CAUTION:` on destructive commands) is what you test in step 12"
+        ]
+      },
+      {
+        "anchor": "# A seeded example exchange so the model copies the format above.",
+        "title": "Few-shot format priming",
+        "note": [
+          "**A fake prior exchange the model imitates - the cheapest way to lock in a format.**",
+          "- Shows the answer style instead of describing it",
+          "- Multi-line values need `\"\"\"` quotes; a bare ``` fence fails `ollama create`"
+        ]
+      }
+    ],
+    "extra/chat_app-complete.txt": [
+      {
+        "anchor": "reply = \"\"",
+        "title": "The streaming chat call",
+        "note": [
+          "**Sends the whole conversation to Ollama and prints the reply as it streams back.**",
+          "- Same `model` / `messages` / `options` you sent by hand with curl in step 4",
+          "- `reply` accumulates the pieces so the answer can go into history"
+        ]
+      },
+      {
+        "anchor": "# Append the model's own answer so the next turn has the full context.",
+        "title": "The app's entire memory",
+        "note": [
+          "**This one line is the whole \"memory\" of the app - Ollama itself stores nothing.**",
+          "- Step 10 comments it out to prove exactly that",
+          "- Removing it drops only what the *model* said; your own turns stay"
+        ]
+      }
+    ]
+  }
+}
