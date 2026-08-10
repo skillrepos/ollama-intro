@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 3.3 - 08/07/26**
+**Revision 4.0 - 08/08/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
 
@@ -54,10 +54,11 @@ When logged in to GitHub, go to https://github.com/settings/codespaces and scrol
 
 ## The labs
 
-`labs.md` contains seven labs. **The first four are what we work through together in the
-two-hour session.** Labs 5 - 7 are written to the same standard and are yours to work through
-afterward - they go deeper on material the slides cover but the clock does not allow us to
-type through.
+`labs.md` contains five labs. **The first four are what we work through together in the
+two-hour session.** Lab 5 is written to the same standard and is yours to work through
+afterward - it covers structured output and OpenAI compatibility (the two developer features
+the clock does not allow us to type through) plus the troubleshooting commands you'll want
+when working on your own.
 
 Every lab is capped at **12 steps and 12 minutes**.
 
@@ -67,9 +68,7 @@ Every lab is capped at **12 steps and 12 minutes**.
 | 2 - Choosing a model and customizing it | 12 | 12 min | In class |
 | 3 - Using Ollama from an application | 11 | 12 min | In class |
 | 4 - Cloud models and wiring up your tools | 11 | 9 min | In class |
-| 5 - Managing models on disk and in memory | 10 | 10 min | Take-home |
-| 6 - The REST API in depth | 8 | 10 min | Take-home |
-| 7 - Troubleshooting toolkit | 11 | 8 min | Take-home |
+| 5 - Structured output, OpenAI compat, troubleshooting | 10 | 10 min | Take-home |
 
 Lab 3 walks the four developer-facing ways into Ollama in order - the CLI (from Lab 1), raw
 HTTP with `curl`, the official `ollama` Python library, and LangChain's `ChatOllama` - and
@@ -123,15 +122,17 @@ python api/warmup.py llama3.2:3b 1h  # warm one model, hold it for an hour
 ```
 
 Lab 1 runs this as step 2. `scripts/startOllama.sh` also runs it in the background every time
-you reconnect to the codespace, so your models are ready when you are. Under the hood it is a
-POST to `/api/generate` with a model and no prompt - students read the source in Lab 3.
+you reconnect to the codespace, and the server is started with `OLLAMA_KEEP_ALIVE=-1`, so once
+loaded, models stay loaded for the life of the codespace - no re-warming between labs or after
+a break. Under the hood the warmup is a POST to `/api/generate` with a model and no prompt -
+students read the source in Lab 3.
 
 <br/>
 
 ## Optional: using larger models
 
 Labs 1 - 3 run entirely on free local models. **Lab 4** reaches a large hosted model on
-Ollama Cloud's free tier, and take-home Lab 7 shows the API-key route:
+Ollama Cloud's free tier, and take-home Lab 5 shows the API-key route:
 
 1. **Ollama Cloud** - `ollama signin`, then pull a cloud-tagged model (for example
    `gpt-oss:120b-cloud`). It routes through your same local endpoint, so your code is unchanged.
@@ -171,7 +172,7 @@ run `pip install -r requirements.txt`, and start at Lab 1.
 | Prompt appears frozen | CPU inference is slow on long answers. Wait 60 seconds before assuming failure. |
 | `ERROR: This version requires zstd for extraction` | The base image ships without `zstd`. The setup scripts now install it automatically; if you hit this on an older codespace, run `sudo apt-get install -y zstd` then `curl -fsSL https://ollama.com/install.sh \| sh`. |
 | VS Code shows a "Restricted Mode" / workspace trust banner | Click **Trust** (or "Yes, I trust the authors"). Until you do, the `code -d` merge steps in Labs 2 and 3 will not open. |
-| First prompt very slow | The model unloaded. Run `python api/warmup.py` |
+| First prompt very slow | The model unloaded (should not happen in the codespace - `OLLAMA_KEEP_ALIVE=-1` pins them). Run `python api/warmup.py` |
 | `ollama launch` not found | Needs Ollama 0.15+. Check `ollama --version` |
 | Codespace out of disk | `ollama rm <model>` for models you are done with |
 | Want to see the server log | `tail -f /tmp/ollama.log` |

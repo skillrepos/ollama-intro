@@ -38,6 +38,8 @@ echo "Step 2: Starting Ollama service..."
 if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
     echo "  Ollama service already running"
 else
+    # Keep models loaded for the life of the codespace (default is 5 minutes).
+    export OLLAMA_KEEP_ALIVE=-1
     nohup ollama serve > /tmp/ollama.log 2>&1 &
     echo "  Ollama started (log: /tmp/ollama.log)"
 fi

@@ -1,5 +1,5 @@
 # openai_compat.py - Point the official OpenAI SDK at your local Ollama server.
-# Lab 7 - Introduction to Ollama
+# Lab 5 - Introduction to Ollama
 #
 # Ollama exposes an OpenAI-compatible surface at http://localhost:11434/v1.
 # That means most code written against OpenAI works unchanged - you only swap

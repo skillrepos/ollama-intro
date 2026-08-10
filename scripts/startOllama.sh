@@ -21,6 +21,9 @@ if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
     echo "Ollama is already running on http://localhost:11434"
 else
     echo "Starting Ollama..."
+    # Keep models loaded for the life of the codespace (the default is 5 minutes,
+    # which makes the first prompt after a break pay a silent reload cost).
+    export OLLAMA_KEEP_ALIVE=-1
     nohup ollama serve > /tmp/ollama.log 2>&1 &
     sleep 3
     echo "Ollama started. Log file: /tmp/ollama.log"

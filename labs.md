@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 3.4 - 08/08/26
+## Revision 4.0 - 08/08/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -19,14 +19,12 @@
 | :-- | :-- | :-- | :-- |
 | 1 - Running your first local model | 12 | 10 min | In class |
 | 2 - Choosing a model and customizing it | 12 | 12 min | In class |
-| 3 - Using Ollama from an application | 12 | 12 min | In class |
+| 3 - Using Ollama from an application | 11 | 12 min | In class |
 | 4 - Cloud models and wiring up your tools | 11 | 9 min | In class |
 | | | | |
-| 5 - Managing models on disk and in memory | 10 | 10 min | Take-home |
-| 6 - The REST API in depth | 8 | 10 min | Take-home |
-| 7 - Troubleshooting toolkit | 11 | 8 min | Take-home |
+| 5 - Structured output, OpenAI compatibility, and troubleshooting | 10 | 10 min | Take-home |
 
-**Labs 1 - 4 are what we do together in the session.** Labs 5 - 7 are written to the same standard and are yours to work through afterward - they go deeper on material the slides cover but the clock does not allow us to type through.
+**Labs 1 - 4 are what we do together in the session.** Lab 5 is written to the same standard and is yours to work through afterward - it covers the two developer features the clock does not allow us to type through, plus the troubleshooting commands you'll want when you are working on your own.
 
 **Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with an optional step that gets you signed in early - **do it during the break** and Lab 4 will go much faster.
 
@@ -555,8 +553,6 @@ ollama signin
 ollama pull gpt-oss:120b-cloud
 ```
 
-![Registering cloud model](./images/ollama41.png?raw=true "Registering cloud model")
-
 <br><br>
 
 3. Confirm what just landed. Compare the `SIZE` column for the cloud model against `llama3.2:3b` - there are no weights on your disk.
@@ -565,7 +561,7 @@ ollama pull gpt-oss:120b-cloud
 ollama list
 ```
 
-![A cloud model in the local list](./images/ollama42.png?raw=true "A cloud model in the local list")
+![A cloud model in the local list](./images/ollama32.png?raw=true "A cloud model in the local list")
 
 <br><br>
 
@@ -575,7 +571,7 @@ ollama list
 ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins."
 ```
 
-![Running a cloud-hosted model](./images/ollama43.png?raw=true "Running a cloud-hosted model")
+![Running a cloud-hosted model](./images/ollama33.png?raw=true "Running a cloud-hosted model")
 
 <br><br>
 
@@ -589,8 +585,6 @@ ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model
 ollama ps
 ```
 
-![Model ps](./images/ollama44.png?raw=true "Model ps")
-
 <br><br>
 
 7. Now the important part: **your code does not change either.** The chat application you finished in Lab 3 reads its model from an environment variable, so point it at the cloud model and run it. Ask it anything, then exit with CTRL-C.
@@ -599,7 +593,7 @@ ollama ps
 OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
 ```
 
-![The same app against a cloud model](./images/ollama45.png?raw=true "The same app against a cloud model")
+![The same app against a cloud model](./images/ollama34.png?raw=true "The same app against a cloud model")
 
    Same library, same `ollama.chat()` call, same streaming loop, same message history. Only the model name is different. This is the single strongest argument for building against Ollama's API rather than a vendor SDK - local and hosted are one line apart.
 
@@ -611,7 +605,7 @@ OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
 ollama launch --help
 ```
 
-![The launch command](./images/ollama46.png?raw=true "The launch command")
+![The launch command](./images/ollama35.png?raw=true "The launch command")
 
    You should see integrations for coding tools such as **Claude Code, OpenCode, Codex, VS Code, and Droid**. (This command needs Ollama 0.15 or later - check with `ollama --version` if you don't see it.)
 
@@ -658,165 +652,13 @@ ollama signout
 
 <br>
 
-**Lab 5 - Managing models on disk and in memory**
+**Lab 5 - Structured output, OpenAI compatibility, and the troubleshooting toolkit**
 
-**Purpose: In this lab, we'll work through the model management commands and see how Ollama shares storage between models. (approx. 10 minutes)**
+**Purpose: In this lab, we'll use structured output to get JSON you can rely on, run existing OpenAI code against Ollama unchanged, and finish with the handful of commands worth knowing when something breaks and no instructor is in the room. (approx. 10 minutes)**
 
-1. Start with what's on disk and what's loaded. The size in `ollama ps` is *larger* than the size in `ollama list` - disk size is the weights, while loaded size adds memory for the context window.
+**Nothing to warm up.** This codespace starts the Ollama server with models pinned in memory (`OLLAMA_KEEP_ALIVE=-1`), so whenever you come back to this lab, the models are loaded and ready. Step 9 explains that knob - it matters on your own machine.
 
-```
-ollama list
-```
-```
-ollama ps
-```
-
-<br><br>
-
-2. There are focused versions of the `show` flag. Try these and see what each one gives you on its own.
-
-```
-ollama show --parameters llama3.2:3b
-```
-```
-ollama show --template llama3.2:3b
-```
-```
-ollama show --system shellcoach
-```
-
-<br><br>
-
-3. On a 4-core codespace, memory is worth managing. You can unload a model immediately instead of waiting for its timer to expire. Load one, unload it, and confirm.
-
-```
-ollama run llama3.2:1b "Say hello."
-```
-```
-ollama ps
-```
-```
-ollama stop llama3.2:1b
-```
-```
-ollama ps
-```
-
-<br><br>
-
-4. Models can be copied under a new name. This is cheap - it does not duplicate the underlying weights, it just adds a new tag pointing at the same blobs. Note that `ollama list` will report the new tag at the *full* size of the model, which is misleading - it is reporting the size of the blobs the tag refers to, not new disk. The `du` commands below show what actually happened on disk.
-
-```
-du -sh ~/.ollama/models
-```
-```
-ollama cp llama3.2:1b my-experiment
-```
-```
-ollama list
-```
-```
-du -sh ~/.ollama/models
-```
-
-   `ollama list` gains a 1.3 GB entry. `du` does not move at all.
-
-<br><br>
-
-5. And removed. `ollama rm` deletes the *tag*; disk space is reclaimed only when no tag references those blobs any more.
-
-```
-ollama rm my-experiment
-```
-
-<br><br>
-
-6. `keep_alive` controls how long a model lingers after its last request - the default is 5 minutes. You can set it per request. The call below loads the model and pins it in memory indefinitely (`-1`); a value of `0` would unload it the moment the request finishes. Run it, then check the *UNTIL* column.
-
-```
-curl -s http://localhost:11434/api/generate -d '{
-  "model": "llama3.2:3b",
-  "keep_alive": -1
-}' | python3 -m json.tool
-```
-```
-ollama ps
-```
-
-<br><br>
-
-7. Put it back to a normal policy so it doesn't hold memory forever.
-
-```
-curl -s http://localhost:11434/api/generate -d '{
-  "model": "llama3.2:3b",
-  "keep_alive": "5m"
-}' | python3 -m json.tool
-```
-
-<br><br>
-
-8. For a whole server, the same policy is set with the `OLLAMA_KEEP_ALIVE` environment variable before starting `ollama serve`. That is the most common production tuning knob, along with `OLLAMA_CONTEXT_LENGTH` and `OLLAMA_MAX_LOADED_MODELS`.
-
-<br><br>
-
-9. Finally, let's look at where the real models come from. Open a new browser tab and go to https://ollama.com/search. Use the filter controls to browse by capability - `tools`, `vision`, `embedding`, `thinking`. Pick a model, look at its card, and find its available tag sizes.
-
-![Browsing the model library](./images/ollama36.png?raw=true "Browsing the model library")
-
-   When you're picking a model for real work, the practical checklist is:
-   - Does it fit in your available RAM? (roughly: file size + 1 - 2 GB of overhead)
-   - Does it have the capability you need - tool calling, vision, embeddings?
-   - Is the context window big enough for your prompts?
-   - Is the license acceptable for what you're building?
-
-<br><br>
-
-10. (Optional) Pull one more small model and compare its `ollama show` output to Llama 3.2. Check `ollama list` before and after so you know what you're adding to a 32 GB codespace.
-
-```
-ollama pull qwen3:0.6b
-```
-```
-ollama show qwen3:0.6b
-```
-
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
-
-**Lab 6 - The REST API in depth**
-
-**Purpose: In this lab, we'll call the API from a program instead of curl, and use structured output to get JSON you can rely on. (approx. 10 minutes)**
-
-1. We've provided a script that calls `/api/tags` and `/api/generate` both ways using nothing but the `requests` library - no Ollama client involved. Open it and look at how little there is to it.
-
-```
-code api/rest_generate.py
-```
-
-<br><br>
-
-2. Run it. It will list your models, do one non-streaming call, then repeat the same prompt with streaming so you can watch the difference. Notice the timing line printed after the non-streaming call - that comes straight from `eval_count` and the duration fields.
-
-```
-python api/rest_generate.py
-```
-
-![Running the REST client script](./images/ollama37.png?raw=true "Running the REST client script")
-
-<br><br>
-
-3. You can pass your own prompt as arguments.
-
-```
-python api/rest_generate.py Explain what a Modelfile is in one sentence.
-```
-
-<br><br>
-
-4. Now the most practically useful API feature: structured output. Instead of parsing prose with regexes, you hand Ollama a JSON Schema in the `format` field and the reply is constrained to match it. Open the script and look at the `SCHEMA` object.
+1. The most practically useful API feature for real applications: **structured output**. Instead of parsing prose with regexes, you hand Ollama a JSON Schema in the `format` field and the reply is constrained to match it. Open the script and look at the `SCHEMA` object. Notice the script uses nothing but the `requests` library - the API is small enough that you don't need any SDK at all.
 
 ```
 code api/structured_output.py
@@ -824,7 +666,7 @@ code api/structured_output.py
 
 <br><br>
 
-5. Run it. The raw response prints first, then the same thing after `json.loads()` - which is guaranteed to succeed because of the schema.
+2. Run it. The raw response prints first, then the same thing after `json.loads()` - which is guaranteed to succeed because of the schema. Run it again with another real subject (`Kubernetes`, `Redis`, whatever you like): the *shape* of the result stays identical while the content changes. That is the whole point.
 
 ```
 python api/structured_output.py PostgreSQL
@@ -834,23 +676,19 @@ python api/structured_output.py PostgreSQL
 
 <br><br>
 
-6. Try it with something else and notice that the *shape* of the result stays identical even though the content changes. That is the whole point.
+3. **The important caveat:** the schema guarantees the *shape*, not the *truth* - and you can prove it without looking anything up. Invent a product that does not exist (mash two tech-sounding words together), and ask about it. The schema's `required` fields mean the model **must** fill in a category, a release year, and use cases for your invention - so it will.
 
 ```
-python api/structured_output.py Kubernetes
+python api/structured_output.py Fluxdash
 ```
+
+![A confident answer about a product that does not exist](./images/ollama41.png?raw=true "A confident answer about a product that does not exist")
+
+   Try your own made-up name too. The object that comes back is well-formed and plausible - and fiction from top to bottom, which *you* know for certain, because you invented the subject. That is the lesson: constrained output doesn't just permit wrong answers, it can **force a confident answer where the honest one is "never heard of it."** The schema validates shape. Truth is your job - validate it separately in real code, and give the model an explicit way out (a `"known": {"type": "boolean"}` field, or an `"unknown"` enum option) when you care about the difference.
 
 <br><br>
 
-7. **Important caveat:** the schema guarantees the shape, not the truth. A well-formed object can still be populated with wrong facts. Run the command below on something obscure and check whether `first_released` is actually right. Validate semantics separately in real code.
-
-```
-python api/structured_output.py Erlang
-```
-
-<br><br>
-
-8. (Optional) Open `api/structured_output.py` and add a new property to `SCHEMA` - for example `"maintained_by": {"type": "string"}` - then rerun and see the model fill it in.
+4. (Optional) Open `api/structured_output.py` and add a new property to `SCHEMA` - for example `"maintained_by": {"type": "string"}` - then rerun and see the model fill it in.
 
 ```
 code api/structured_output.py
@@ -859,16 +697,9 @@ code api/structured_output.py
 python api/structured_output.py PostgreSQL
 ```
 
-<p align="center">
-**[END OF LAB]**
-</p>
-</br></br>
+<br><br>
 
-**Lab 7 - The troubleshooting toolkit and OpenAI compatibility**
-
-**Purpose: In this lab, we'll reuse existing OpenAI code against Ollama, reach the cloud with an API key instead of a signin, and work through the handful of commands worth knowing when something breaks. (approx. 8 minutes)**
-
-1. Ollama serves an OpenAI-compatible surface at `/v1`. That means most code already written against OpenAI works by changing two things: the base URL and the model name. Confirm the endpoint is there.
+5. The second developer feature: Ollama serves an **OpenAI-compatible** surface at `/v1`. That means most code already written against OpenAI works by changing two things: the base URL and the model name. Confirm the endpoint is there.
 
 ```
 curl -s http://localhost:11434/v1/models | python3 -m json.tool
@@ -878,16 +709,11 @@ curl -s http://localhost:11434/v1/models | python3 -m json.tool
 
 <br><br>
 
-2. We've provided a script that uses the *official OpenAI Python SDK* - not the Ollama library - pointed at your local server. Open it and look at how ordinary it is. The `api_key` is required by the SDK but ignored by Ollama, so any string works.
+6. We've provided a script that uses the *official OpenAI Python SDK* - not the Ollama library - pointed at your local server. Open it, see how ordinary it is, then run it. The `api_key` is required by the SDK but ignored by Ollama, so any string works. Nothing leaves this codespace, but the code is indistinguishable from code that calls a hosted provider - swapping `base_url` to a real vendor is a one-line change.
 
 ```
 code api/openai_compat.py
 ```
-
-<br><br>
-
-3. Run it. Nothing left this codespace, but the code is indistinguishable from code that would call a hosted provider. Swapping `base_url` to a real vendor is a one-line change.
-
 ```
 python api/openai_compat.py
 ```
@@ -896,16 +722,11 @@ python api/openai_compat.py
 
 <br><br>
 
-4. In Lab 4 you reached Ollama Cloud by signing in, which routes cloud requests through your local server. There is a second way: talk to `https://ollama.com` directly with an API key, which is what you'd do from a server or a CI job where there is no interactive signin. Create a key at https://ollama.com/settings/keys, then export it.
+7. (Optional) In Lab 4 you reached Ollama Cloud by signing in, which routes cloud requests through your local server. There is a second way: talk to `https://ollama.com` directly with an API key - what you'd do from a server or a CI job where there is no interactive signin. Create a key at https://ollama.com/settings/keys, export it, read the provided script (the `client.chat()` call is character-for-character the same as `chat_app.py` - only the client construction changed), and run it. No key? Run it anyway - it fails with a checklist that tells you exactly what is missing.
 
 ```
 export OLLAMA_API_KEY=your_key_here
 ```
-
-<br><br>
-
-5. Run the provided script. Read the source first - notice that the `client.chat()` call is character-for-character the same as the one in `chat_app.py`. Only the client construction changed.
-
 ```
 code api/cloud_chat.py
 ```
@@ -915,23 +736,18 @@ python api/cloud_chat.py
 
 <br><br>
 
-6. Now the troubleshooting toolkit. First, is the service even up?
+8. Now the troubleshooting toolkit. The first two questions when something breaks: is the service even up, and if not, why? The server log usually says.
 
 ```
 curl -s http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || echo "Ollama is NOT running"
 ```
-
-<br><br>
-
-7. If it isn't, the server log will usually say why.
-
 ```
 tail -30 /tmp/ollama.log
 ```
 
 <br><br>
 
-8. If you ever get `address already in use` on port 11434, there's a stale server. Stop everything, then start it cleanly. Note that `startOllama.sh` also kicks off the warmup from Lab 1 in the background, so your models come back ready.
+9. If you ever get `address already in use` on port 11434, there's a stale server: stop everything, then start it cleanly.
 
 ```
 bash scripts/shutdown_ollama.sh
@@ -940,20 +756,11 @@ bash scripts/shutdown_ollama.sh
 bash scripts/startOllama.sh
 ```
 
-<br><br>
-
-9. If a model has been idle long enough to unload, you don't have to wait for the next prompt to reload it. Warm it deliberately, and pin it for as long as you need.
-
-```
-python api/warmup.py llama3.2:3b 1h
-```
-```
-ollama ps
-```
+   And while we're at the server: **the memory knobs.** This codespace sets `OLLAMA_KEEP_ALIVE=-1` before `ollama serve`, which is why models stay loaded - check `ollama ps` and the *UNTIL* column says *Forever*. On your own machine the default is **5 minutes**: a model unloads five minutes after its last request, and the next prompt silently pays a reload cost. That is why a "slow first prompt" is almost never a bug. You can also set the policy per request (`"keep_alive": -1` pins a model, `"0"` unloads it the moment the request finishes), and `ollama stop <model>` unloads one *right now* when you need the memory back.
 
 <br><br>
 
-10. And if you're running low on disk, remove models you're done with. Run `ollama list` first and pick something you no longer need - for example the `shellcoach` model from Lab 2, `my-experiment` if it survived Lab 5, or `qwen3:0.6b` if you pulled it.
+10. Done experimenting? Reclaim disk from models you no longer need - `ollama rm` deletes the *tag*, and space is reclaimed once no tag references those weights.
 
 ```
 ollama list
@@ -962,9 +769,8 @@ ollama list
 ollama rm shellcoach
 ```
 
-<br><br>
-
-11. **Where to go next:**
+   **Where to go next:**
+   - Browse the model library at https://ollama.com/search - filter by capability (`tools`, `vision`, `embedding`, `thinking`), and check the four things that matter: does it fit in your RAM, can it do the thing you need, is the context window big enough, and is the license OK
    - Pull an embedding model, call `/api/embed`, and build a small RAG prototype entirely offline
    - Use `/api/chat` with the `tools` parameter to try local tool calling
    - Run `ollama launch` for real, on a machine where your coding tool is installed

@@ -1,5 +1,5 @@
 # cloud_chat.py - Run a large model you could never fit in this codespace.
-# Lab 7 - Introduction to Ollama
+# Lab 5 (optional) - Introduction to Ollama
 #
 # Ollama Cloud hosts large models behind the SAME API you have been using.
 # There are two ways in:

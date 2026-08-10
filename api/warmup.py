@@ -22,7 +22,7 @@ import requests
 
 HOST = "http://localhost:11434"
 DEFAULT_MODELS = ["llama3.2:3b", "llama3.2:1b"]
-DEFAULT_KEEP_ALIVE = "30m"
+DEFAULT_KEEP_ALIVE = "-1"   # pin: match the server-wide OLLAMA_KEEP_ALIVE=-1 policy
 
 # 30m, 1h, 90s, 0, -1 - but not "shellcoach"
 DURATION = re.compile(r"-?\d+(?:\.\d+)?(?:ms|s|m|h)?")
