@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.0 - 08/08/26
+## Revision 4.1 - 08/10/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -110,7 +110,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. We can also change how the model behaves without leaving the session. The one to know first is **`num_predict`** - a hard cap on how many tokens the answer may run to. On a CPU-only box this is the difference between a snappy lab and a room full of people waiting. Set it very low and ask a question that would normally get a long answer.
+7. We can also change how the model behaves without leaving the session. The one to know first is **`num_predict`** - a hard cap on how many tokens the answer may run to. Set it very low and ask a question that would normally get a long answer.
 
 ```
 /set parameter num_predict 20
