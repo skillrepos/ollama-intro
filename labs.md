@@ -110,51 +110,30 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. We can also change how the model behaves without leaving the session. *Temperature* controls how adventurous the model is when it picks each next word. Judging one answer against another is guesswork, so instead ask the **same question several times** at each setting and watch how much the answers spread out. We use `/clear` (from the step 6 menu) between asks so each one starts from a fresh context - note that `/clear` wipes the conversation but *keeps* your parameter setting. Run the sequence below.
+7. We can also change how the model behaves without leaving the session. The one to know first is **`num_predict`** - a hard cap on how many tokens the answer may run to. On a CPU-only box this is the difference between a snappy lab and a room full of people waiting. Set it very low and ask a question that would normally get a long answer.
 
 ```
-/set parameter temperature 0
+/set parameter num_predict 20
 ```
 ```
-Write a tagline for a coffee shop. Just the tagline.
-```
-```
-/clear
-```
-```
-Write a tagline for a coffee shop. Just the tagline.
-```
-```
-/clear
-```
-```
-Write a tagline for a coffee shop. Just the tagline.
-```
-```
-/set parameter temperature 2
-```
-```
-/clear
-```
-```
-Write a tagline for a coffee shop. Just the tagline.
-```
-```
-/clear
-```
-```
-Write a tagline for a coffee shop. Just the tagline.
-```
-```
-/clear
-```
-```
-Write a tagline for a coffee shop. Just the tagline.
+Explain what a container image is.
 ```
 
-   Compare the two groups of three. At **temperature 0** the model takes the single most likely word every time, so the three answers land in a tight cluster - often word-for-word identical, sometimes differing only slightly. At **temperature 2** it happily reaches for unlikely words, so the three answers scatter, and you may see one start to come apart into something that is not quite English. That is the tradeoff in one screen: low temperature buys you consistency, high temperature buys you variety, and past a point variety turns into nonsense. For anything you plan to test or parse, you want the left-hand behavior. We'll bake a low value into our own model in Lab 2.
+   The answer **stops mid-sentence**. That is the point: `num_predict` is a hard stop, not a polite request for brevity. Now raise it and ask again, using `/clear` in between so the second ask starts fresh - `/clear` wipes the conversation but *keeps* your parameter setting.
 
-   **If your temperature-0 answers are not all identical, nothing is broken.** Temperature 0 makes the *choice* deterministic - always take the top-scoring word - but the scores themselves are computed by many CPU threads adding up partial results, and floating-point addition is not perfectly repeatable when the order changes. When two candidate words are nearly tied, a difference in the last decimal place flips which one wins, and the sentence diverges from there. That is why two temperature-0 answers often share a first word and then split - which is a real look at how a model actually generates: one token at a time, each one conditioned on the last.
+```
+/set parameter num_predict 200
+```
+```
+/clear
+```
+```
+Explain what a container image is.
+```
+
+![Capping the answer length with num_predict](./images/ollama10.png?raw=true "Capping the answer length with num_predict")
+
+   Several paragraphs this time - and look closely at the end, because it is very likely cut off too, just further along. The model does not know about the cap and never wraps up early; generation simply halts when the budget runs out. So if you want answers that are both short *and* complete, ask for brevity in the prompt and set `num_predict` as a safety net on top. We'll bake a value for it into our own model in Lab 2, along with `temperature` and the other sampling parameters.
 
 <br><br>
 
@@ -282,6 +261,7 @@ code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 
 6. Read through what you just merged. Three things are happening:
    - **PARAMETER** lines set defaults that ship with the model - low `temperature` for consistency, a `num_ctx` of 4096, and a `num_predict` cap so answers can't ramble forever.
+     Note that `temperature` and `top_p` are both here, because they do different jobs: **`top_k` and `top_p` decide which words are even eligible, and `temperature` decides how boldly to pick among them.** `top_k` (default 40) keeps only the 40 highest-scoring words; `top_p` (default 0.9) keeps the most likely words that together account for 90% of the probability. Everything in the long tail is discarded *before* temperature gets a vote - which is why turning temperature up on its own gives you variety rather than nonsense. Step 12 lets you take the guard rails off and hear the difference.
    - **SYSTEM** is the persona and the rules. It gets prepended to every single conversation, so users don't have to remember to ask for the format.
    - **MESSAGE** lines seed a fake exchange the model treats as prior conversation. This is few-shot priming - the cheapest way to lock in an output format.
 
@@ -350,6 +330,8 @@ ollama show --modelfile shellcoach
 <br><br>
 
 12. (Optional) Two things to try if you finish early. First, test the safety rule we wrote into the system prompt and look for the `CAUTION:` line. Then open the Modelfile, change `PARAMETER temperature 0.2` to `PARAMETER temperature 1.4`, save, rebuild, and rerun - re-running `ollama create` with the same name simply replaces the model. This edit-create-run loop is the fastest feedback cycle in the workshop.
+
+   If you want to hear what step 6 was describing, go further: set `PARAMETER temperature 2`, add `PARAMETER top_k 0` and `PARAMETER top_p 1.0` to switch the filters off entirely, rebuild, and ask again. With nothing filtering the candidate list, the answer comes apart into several languages at once. Put the original values back afterward - and note this is exactly why you pin these in a Modelfile instead of hoping every caller remembers to pass them.
 
 ```
 ollama run shellcoach "How do I delete every .tmp file under my home directory?"
