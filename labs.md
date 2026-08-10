@@ -329,22 +329,8 @@ ollama show --modelfile shellcoach
 
 <br><br>
 
-12. (Optional) Two things to try if you finish early. First, test the safety rule we wrote into the system prompt and look for the `CAUTION:` line. Then open the Modelfile, change `PARAMETER temperature 0.2` to `PARAMETER temperature 1.4`, save, rebuild, and rerun - re-running `ollama create` with the same name simply replaces the model. This edit-create-run loop is the fastest feedback cycle in the workshop.
+12. (Optional) Two things to try if you finish early. First, test the safety rule we wrote into the system prompt and look for the `CAUTION:` line. Then open the Modelfile, change `PARAMETER temperature 0.2` to `PARAMETER temperature 1.4`, save, rebuild, and rerun - re-running `ollama create` with the same name simply replaces the model. 
 
-   If you want to hear what step 6 was describing, go further: set `PARAMETER temperature 2`, add `PARAMETER top_k 0` and `PARAMETER top_p 1.0` to switch the filters off entirely, rebuild, and ask again. With nothing filtering the candidate list, the answer comes apart into several languages at once. Put the original values back afterward - and note this is exactly why you pin these in a Modelfile instead of hoping every caller remembers to pass them.
-
-```
-ollama run shellcoach "How do I delete every .tmp file under my home directory?"
-```
-```
-code modelfiles/Modelfile.shellcoach
-```
-```
-ollama create shellcoach -f modelfiles/Modelfile.shellcoach
-```
-```
-ollama run shellcoach "How do I check how much disk space is free?"
-```
 
 <p align="center">
 **[END OF LAB]**
