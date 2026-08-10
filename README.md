@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.1 - 08/10/26**
+**Revision 4.2 - 08/10/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
 
@@ -29,25 +29,20 @@ Click here ➡️  [![Open in GitHub Codespaces](https://github.com/codespaces/b
 
 **3. Then click on the option to create a new codespace.**
 
-![Creating new codespace from button](./images/ollama1.png?raw=true "Creating new codespace from button")
+![Creating new codespace from button](./images/ollama47.png?raw=true "Creating new codespace from button")
 
-This will run for several minutes while it gets everything ready.
+This will run for several minutes while it gets everything ready, including downloading all dependencies, setting up the Python environment and pulling a local LLM for us to use.
 
-After the initial startup, it runs two scripts:
-- `scripts/pysetup.sh` creates the Python virtual environment and installs the requirements
-- `scripts/startup_ollama.sh` installs Ollama, starts the service, and pre-pulls **llama3.2:3b** (the workshop default) and **llama3.2:1b**
+The codespace is ready to use when you see output in the terminal similar to the following.
 
-Pre-pulling the models up front is deliberate - it means the first lab prompt in class is fast instead of waiting on a 2 GB download.
-
-The codespace is ready to use when you see the `Ready for lab exercises!` banner in the terminal.
-
-![Ready to use](./images/ollama2.png?raw=true "Ready to use")
+![Ready to use](./images/ollama49.png?raw=true "Ready to use")
 
 **4. If VS Code shows a workspace trust prompt, click *Trust*.**
 
 The codespace may open in Restricted Mode with a banner asking whether you trust the authors
-of the files. Click **Trust** (or *Yes, I trust the authors*). Until you do, the `code -d`
-diff-and-merge steps in Labs 2 and 3 will not open.
+of the files. Click **Trust** (or *Yes, I trust the authors*). 
+
+![Trust workspace](./images/ollama48.png?raw=true "Trust workspace")
 
 **5. Open up the *labs.md* file so you can follow along with the labs.**
 
