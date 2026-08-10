@@ -1,7 +1,7 @@
 # Getting Started with Ollama
-## Running and using local LLMs
+## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.1 - 08/10/26
+## Revision 4.0 - 08/08/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -110,7 +110,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. We can also change how the model behaves without leaving the session. *Temperature* controls randomness - but the way to *see* that is not to compare two answers and judge which one looks "wilder." It is repeatability: ask the **same question twice** at each setting. At temperature 0 the model always picks the most likely next token, so the answer comes back word-for-word identical. At 1.5 it samples freely, so every run is different. We use `/clear` (you saw it in the step 6 menu) between asks so each one starts from a fresh context - and notice that `/clear` wipes the conversation but *keeps* your parameter setting. Run the sequence below.
+7. We can also change how the model behaves without leaving the session. *Temperature* controls how adventurous the model is when it picks each next word. Judging one answer against another is guesswork, so instead ask the **same question several times** at each setting and watch how much the answers spread out. We use `/clear` (from the step 6 menu) between asks so each one starts from a fresh context - note that `/clear` wipes the conversation but *keeps* your parameter setting. Run the sequence below.
 
 ```
 /set parameter temperature 0
@@ -125,7 +125,19 @@ Write a tagline for a coffee shop. Just the tagline.
 Write a tagline for a coffee shop. Just the tagline.
 ```
 ```
-/set parameter temperature 1.5
+/clear
+```
+```
+Write a tagline for a coffee shop. Just the tagline.
+```
+```
+/set parameter temperature 2
+```
+```
+/clear
+```
+```
+Write a tagline for a coffee shop. Just the tagline.
 ```
 ```
 /clear
@@ -140,9 +152,9 @@ Write a tagline for a coffee shop. Just the tagline.
 Write a tagline for a coffee shop. Just the tagline.
 ```
 
-![Comparing temperature settings](./images/ollama10.png?raw=true "Comparing temperature settings")
+   Compare the two groups of three. At **temperature 0** the model takes the single most likely word every time, so the three answers land in a tight cluster - often word-for-word identical, sometimes differing only slightly. At **temperature 2** it happily reaches for unlikely words, so the three answers scatter, and you may see one start to come apart into something that is not quite English. That is the tradeoff in one screen: low temperature buys you consistency, high temperature buys you variety, and past a point variety turns into nonsense. For anything you plan to test or parse, you want the left-hand behavior. We'll bake a low value into our own model in Lab 2.
 
-   The first pair should be **identical** - that is what deterministic means, and it is why low temperature matters for anything you want to test or parse. The second pair should come back different. This is the single most useful knob you have, and we'll bake a value for it into our own model in Lab 2.
+   **If your temperature-0 answers are not all identical, nothing is broken.** Temperature 0 makes the *choice* deterministic - always take the top-scoring word - but the scores themselves are computed by many CPU threads adding up partial results, and floating-point addition is not perfectly repeatable when the order changes. When two candidate words are nearly tied, a difference in the last decimal place flips which one wins, and the sentence diverges from there. That is why two temperature-0 answers often share a first word and then split - which is a real look at how a model actually generates: one token at a time, each one conditioned on the last.
 
 <br><br>
 
@@ -756,7 +768,7 @@ bash scripts/shutdown_ollama.sh
 bash scripts/startOllama.sh
 ```
 
-   And while we're at the server: **the memory knobs.** This codespace sets `OLLAMA_KEEP_ALIVE=-1` before `ollama serve`, which is why models stay loaded - check `ollama ps` and the *UNTIL* column says *Forever*. On your own machine the default is **5 minutes**: a model unloads five minutes after its last request, and the next prompt silently pays a reload cost. That is why a "slow first prompt" is almost never a bug. You can also set the policy per request (`"keep_alive": -1` pins a model, `"0"` unloads it the moment the request finishes), and `ollama stop <model>` unloads one *right now* when you need the memory back.
+   And while we're at the server: **the memory knobs.** This codespace sets `OLLAMA_KEEP_ALIVE=-1` before `ollama serve`, which is why models stay loaded - check `ollama ps` and the *UNTIL* column says *Forever*. On your own machine the default is **5 minutes**: a model unloads five minutes after its last request, and the next prompt silently pays a reload cost. That is why a "slow first prompt" is almost never a bug. You can also set the policy per request - `"keep_alive": -1` pins a model and `"keep_alive": 0` unloads it the moment the request finishes (both are JSON **numbers**; a quoted `"-1"` is read as a duration string, has no unit, and the API rejects it - `"30m"` and `"1h"` are the string forms). And `ollama stop <model>` unloads one *right now* when you need the memory back.
 
 <br><br>
 

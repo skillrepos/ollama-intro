@@ -22,7 +22,7 @@ import requests
 
 HOST = "http://localhost:11434"
 DEFAULT_MODELS = ["llama3.2:3b", "llama3.2:1b"]
-DEFAULT_KEEP_ALIVE = "-1"   # pin: match the server-wide OLLAMA_KEEP_ALIVE=-1 policy
+DEFAULT_KEEP_ALIVE = "-1"   # -1 = never unload (matches the server's OLLAMA_KEEP_ALIVE=-1)
 
 # 30m, 1h, 90s, 0, -1 - but not "shellcoach"
 DURATION = re.compile(r"-?\d+(?:\.\d+)?(?:ms|s|m|h)?")
@@ -38,12 +38,23 @@ def installed_models():
     return {m["name"] for m in resp.json().get("models", [])}
 
 
+def as_keep_alive(value):
+    """Ollama accepts keep_alive as EITHER a duration string ("30m", "1h") OR a
+    plain number of seconds, where -1 means "never unload". A bare number has to
+    be sent as a JSON number: the string "-1" is parsed as a duration, has no unit
+    suffix, and the API rejects the request with 400 Bad Request."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return value
+
+
 def load(model, keep_alive):
     """Load one model into memory. No prompt means no generation - just the load."""
     start = time.time()
     resp = requests.post(
         f"{HOST}/api/generate",
-        json={"model": model, "keep_alive": keep_alive},
+        json={"model": model, "keep_alive": as_keep_alive(keep_alive)},
         timeout=600,
     )
     resp.raise_for_status()
@@ -72,7 +83,8 @@ def main():
     print("=" * 58)
     print("Ollama warmup")
     print(f"  models     : {', '.join(models)}")
-    print(f"  keep_alive : {keep_alive}")
+    label = "-1 (never unload)" if str(keep_alive) == "-1" else str(keep_alive)
+    print(f"  keep_alive : {label}")
     print("=" * 58)
     print()
 
@@ -103,7 +115,10 @@ def main():
         print(f"  {'MODEL':<24}{'SIZE':>10}   UNTIL")
         for m in running:
             gb = m.get("size", 0) / 1e9
-            print(f"  {m['name']:<24}{gb:>8.1f} GB   {m.get('expires_at', '?')[:19]}")
+            # A pinned model gets a far-future expiry; 'ollama ps' prints that as Forever.
+            expires = m.get("expires_at", "?")
+            until = "Forever" if expires[:4].isdigit() and int(expires[:4]) > 2100 else expires[:19]
+            print(f"  {m['name']:<24}{gb:>8.1f} GB   {until}")
     else:
         print("Nothing is loaded - something went wrong.")
 
