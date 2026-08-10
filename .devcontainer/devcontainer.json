@@ -5,6 +5,15 @@
         "OLLAMA_MODEL": "llama3.2:3b",
         "OLLAMA_HOST": "127.0.0.1:11434"
     },
+    // Ollama's API is the only port anyone needs. Ollama also spawns one
+    // "runner" child process per loaded model, each on a random high port, and
+    // VS Code auto-forwards those - so the PORTS panel fills up with entries
+    // students have no use for, and stale ones survive codespace restarts.
+    "forwardPorts": [11434],
+    "portsAttributes": {
+        "11434": { "label": "Ollama API", "onAutoForward": "silent" }
+    },
+    "otherPortsAttributes": { "onAutoForward": "ignore" },
     "hostRequirements": {
        "cpus": 4,
        "memory": "16gb",
