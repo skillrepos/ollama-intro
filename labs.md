@@ -1,7 +1,7 @@
 # Getting Started with Ollama
-## Running and using local LLMs - two-hour workshop
+## Running and using local LLMs
 ## Session labs
-## Revision 4.0 - 08/08/26
+## Revision 4.1 - 08/10/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
