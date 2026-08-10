@@ -43,9 +43,11 @@
             }
         }
     },
-    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh",
-    // Installs the Merge Info extension (hover popups on the 'code -d' merge blocks,
-    // driven by merge-info.json at the repo root), then starts/warms Ollama.
-    // The ';' is deliberate: if the extension install fails, Ollama still starts.
-    "postAttachCommand": "code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true; bash scripts/startOllama.sh"
+    // The Merge Info extension install lives HERE, not in postAttachCommand.
+    // postCreate runs without an interactive terminal, so nothing can interrupt it.
+    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh; code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true",
+    // Detached on purpose: VS Code extensions (Python, Git) relaunch the
+    // post-attach terminal and send a Ctrl+C, which kills anything running
+    // in the foreground there. setsid+nohup puts this out of its reach.
+    "postAttachCommand": "setsid nohup bash scripts/postattach.sh >/tmp/postattach.log 2>&1 </dev/null &"
 }
