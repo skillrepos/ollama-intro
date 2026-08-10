@@ -219,7 +219,7 @@ time ollama run llama3.2:3b "What is a vector embedding? One sentence."
 
 ![Comparing model sizes and speed](./images/ollama15.png?raw=true "Comparing model sizes and speed")
 
-   The larger model takes roughly 30-60% longer - not the 3x you might expect from "almost three times the parameters." Here is why, and it is the most useful thing in this lab: on a CPU-only box, generation speed is set by **how many bytes have to be read per token**, not by parameter count. Look back at step 1 - the 3B is quantized to `Q4_K_M` (about 4 bits per weight) while the 1B is `Q8_0` (about 8 bits). So 3.2B x 4 bits against 1.2B x 8 bits is only about 1.3x the bytes, and that is almost exactly the slowdown you just measured.
+   The larger model takes roughly 30-60% longer - not the 3x you might expect from "almost three times the parameters." Here is why: on a CPU-only box, generation speed is set by **how many bytes have to be read per token**, not by parameter count. Look back at step 1 - the 3B is quantized to `Q4_K_M` (about 4 bits per weight) while the 1B is `Q8_0` (about 8 bits). So 3.2B x 4 bits against 1.2B x 8 bits is only about 1.3x the bytes, and that is almost exactly the slowdown you just measured.
 
    **Quantization matters as much as parameter count.** Compare the elapsed time *and* the quality of the answer - **that tradeoff is model selection.** There is no ranking here, only a choice. We default to 3B for this workshop because the answers are nearly free at this size; a batch job over ten thousand records might still choose 1B.
 
