@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.3 - 08/10/26
+## Revision 4.4 - 08/10/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -298,7 +298,7 @@ python api/warmup.py shellcoach
 ollama run shellcoach "How do I find files modified in the last 24 hours?"
 ```
 
-![Running the custom model](./images/ollama20.png?raw=true "Running the custom model")
+![Running the custom model](./images/ollama51.png?raw=true "Running the custom model")
 
 <br><br>
 
@@ -315,7 +315,7 @@ ollama run llama3.2:3b "How do I find files modified in the last 24 hours?"
    - **The command comes first, in a code block** - the SYSTEM rules plus the seeded MESSAGE exchange. The base model buries its command in prose, often after a paragraph of preamble.
    - **Short and it stops** - `num_predict 160` caps the answer. The base model tends to ramble through multiple "methods," including Windows and Mac ones nobody asked about.
    - **Same format every time** - `temperature 0.2` is baked in. Re-run the shellcoach command and the shape repeats; the base model at its default temperature varies run to run.
-   - **A `CAUTION:` line on anything destructive** - a behavior that exists only because one SYSTEM rule asked for it.
+   - **A `CAUTION:` line when a command is destructive** - a behavior that exists only because one SYSTEM rule asked for it.
 
    One thing that does **not** change: correctness. Both models share the exact same weights, so a mistake the base model would make (watch the `find -mtime` sign) shellcoach can make too - just more tersely. Customization buys you *behavior*, not *knowledge*.
 
