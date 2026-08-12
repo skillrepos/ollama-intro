@@ -347,7 +347,7 @@ ollama show --modelfile shellcoach
 curl http://localhost:11434
 ```
 ```
-curl -s http://localhost:11434/api/tags | python3 -m json.tool
+curl -sS http://localhost:11434/api/tags | python3 -m json.tool
 ```
 ```
 code api/warmup.py
@@ -360,7 +360,7 @@ code api/warmup.py
 2. Now let's actually generate something. `/api/generate` is the single-turn endpoint - one prompt in, one completion out. `"stream": false` tells Ollama to send one complete JSON object when it's finished rather than a stream of fragments, and `num_predict` caps how long the answer can run.
 
 ```
-curl -s http://localhost:11434/api/generate -d '{
+curl -sS http://localhost:11434/api/generate -d '{
   "model": "llama3.2:3b",
   "prompt": "In two sentences, what is a REST API?",
   "stream": false,
@@ -379,7 +379,7 @@ curl -s http://localhost:11434/api/generate -d '{
 3. Now the same request with streaming left on (it's the default). Instead of one object, you get a stream of newline-delimited JSON, one per token, with a final object where `done` is `true`. This is what makes a chat UI feel responsive - and on a CPU-only box it's the difference between usable and apparently broken.
 
 ```
-curl -s http://localhost:11434/api/generate -d '{
+curl -sS http://localhost:11434/api/generate -d '{
   "model": "llama3.2:3b",
   "prompt": "In two sentences, what is a REST API?",
   "options": { "num_predict": 60 }
@@ -393,7 +393,7 @@ curl -s http://localhost:11434/api/generate -d '{
 4. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. Notice we are sending the whole conversation - a system message, a user turn, the assistant's reply, and a new user turn that only makes sense in context. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
 
 ```
-curl -s http://localhost:11434/api/chat -d '{
+curl -sS http://localhost:11434/api/chat -d '{
   "model": "llama3.2:3b",
   "stream": false,
   "options": { "num_predict": 60 },
@@ -682,7 +682,7 @@ python api/structured_output.py PostgreSQL
 5. The second developer feature: Ollama serves an **OpenAI-compatible** surface at `/v1`. That means most code already written against OpenAI works by changing two things: the base URL and the model name. Confirm the endpoint is there.
 
 ```
-curl -s http://localhost:11434/v1/models | python3 -m json.tool
+curl -sS http://localhost:11434/v1/models | python3 -m json.tool
 ```
 
 ![The OpenAI-compatible model list](./images/ollama39.png?raw=true "The OpenAI-compatible model list")
@@ -719,7 +719,7 @@ python api/cloud_chat.py
 8. Now the troubleshooting toolkit. The first two questions when something breaks: is the service even up, and if not, why? The server log usually says.
 
 ```
-curl -s http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || echo "Ollama is NOT running"
+curl -sS http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || echo "Ollama is NOT running"
 ```
 ```
 tail -30 /tmp/ollama.log
