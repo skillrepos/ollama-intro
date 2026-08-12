@@ -399,7 +399,23 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. Notice we are sending the whole conversation - a system message, a user turn, the assistant's reply, and a new user turn that only makes sense in context. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
+5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array - and the quickest way to see what that array actually does is to ask the **same question twice**, once without it and once with it.
+
+   First, the follow-up question on its own. "That" refers to nothing, and the model will say so.
+
+```
+curl -sS http://localhost:11434/api/chat -d '{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "options": { "num_predict": 60 },
+  "messages": [
+    {"role": "system", "content": "You are terse and concrete."},
+    {"role": "user", "content": "Why is that better than a hosted API?"}
+  ]
+}' | python3 -m json.tool
+```
+
+   Now the identical question with a conversation in front of it. Notice we are *writing* the `assistant` turn ourselves - the model never said it. That is allowed, and it is the point: the array is a transcript you hand over, not a record of something that happened.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -417,6 +433,9 @@ curl -sS http://localhost:11434/api/chat -d '{
 
 ![Multi-turn chat over the API](./images/ollama25.png?raw=true "Multi-turn chat over the API")
 
+   Same model, same options, same final question. The only thing that changed is the `messages` array - and it is the difference between "what is *that*?" and a direct answer. **The array is the memory, and putting it there is your job.**
+
+   Two details worth noting while you are here. Only the *last* message is ever answered; everything before it is context, which is why you get one reply and not two. And the token counts show the split - `prompt_eval_count` is everything you sent, `eval_count` is the handful it generated back. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
 <br><br>
 
 6. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
