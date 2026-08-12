@@ -22,7 +22,9 @@
     "features": {
        "ghcr.io/devcontainers/features/docker-from-docker:1": {},
        "ghcr.io/devcontainers/features/github-cli:1": {},
-       "ghcr.io/devcontainers/features/python:1": {}
+       "ghcr.io/devcontainers/features/python:1": {},
+       // Node is here only so Claude Code can be installed for Lab 4 step 9.
+       "ghcr.io/devcontainers/features/node:1": {}
     },
     "customizations": {
         "vscode": {
@@ -54,7 +56,7 @@
     },
     // The Merge Info extension install lives HERE, not in postAttachCommand.
     // postCreate runs without an interactive terminal, so nothing can interrupt it.
-    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh; code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true",
+    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh; code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true; npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || sudo npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true",
     // Detached on purpose: VS Code extensions (Python, Git) relaunch the
     // post-attach terminal and send a Ctrl+C, which kills anything running
     // in the foreground there. setsid+nohup puts this out of its reach.

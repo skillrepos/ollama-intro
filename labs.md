@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.6 - 08/12/26
+## Revision 4.8 - 08/12/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -354,19 +354,8 @@ curl -sS http://localhost:11434/api/tags | python3 -m json.tool
 
 <br><br>
 
-2. (Optional) Open the warmup program from Lab 1: `/api/tags` is where it gets its model list, and the whole warmup trick is a POST to `/api/generate` with a model and **no prompt**, which loads the weights and returns without generating anything.
 
-
-```
-code api/warmup.py
-```
-
-![Code using the API](./images/ollama52.png?raw=true "Code using the API")
-
-<br><br>
-
-
-3. Now let's actually generate something. `/api/generate` is the single-turn endpoint - one prompt in, one completion out. `"stream": false` tells Ollama to send one complete JSON object when it's finished rather than a stream of fragments, and `num_predict` caps how long the answer can run.
+2. Now let's actually generate something. `/api/generate` is the single-turn endpoint - one prompt in, one completion out. `"stream": false` tells Ollama to send one complete JSON object when it's finished rather than a stream of fragments, and `num_predict` caps how long the answer can run.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -385,7 +374,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-4. Now the same request with streaming left on (it's the default). Instead of one object, you get a stream of newline-delimited JSON, one per token, with a final object where `done` is `true`. This is what makes a chat UI feel responsive - and on a CPU-only box it's the difference between usable and apparently broken.
+3. Now the same request with streaming left on (it's the default). Instead of one object, you get a stream of newline-delimited JSON, one per token, with a final object where `done` is `true`. This is what makes a chat UI feel responsive - and on a CPU-only box it's the difference between usable and apparently broken.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -399,7 +388,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. To see what that array actually buys you, ask the **same question twice** - once cold, once with a conversation in front of it. The question is about *your* machine, so no amount of training data can help: the answer either comes from the array or it doesn't come at all.
+4. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. To see what that array actually buys you, ask the **same question twice** - once cold, once with a conversation in front of it. The question is about *your* machine, so no amount of training data can help: the answer either comes from the array or it doesn't come at all.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -438,11 +427,11 @@ curl -sS http://localhost:11434/api/chat -d '{
    Two details worth noting while you are here. Only the *last* message is ever answered - everything before it is context, which is why you get one reply and not two. And `eval_count` is the handful of tokens generated back against all that input. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
 <br><br>
 
-6. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
+5. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
 
 <br><br>
 
-7. The official Python library is a thin, typed wrapper over those same endpoints, and it's already installed. We've provided a chat application with two pieces missing. Open it either by clicking on [**api/chat_app.py**](./api/chat_app.py) or with the command below.
+6. The official Python library is a thin, typed wrapper over those same endpoints, and it's already installed. We've provided a chat application with two pieces missing. Open it either by clicking on [**api/chat_app.py**](./api/chat_app.py) or with the command below.
 
 ```
 code api/chat_app.py
@@ -454,7 +443,7 @@ code api/chat_app.py
 
 <br><br>
 
-8. As before, we'll use the "view differences and merge" technique to learn about the code we'll be working with. Run the command below in the terminal.
+7. As before, we'll use the "view differences and merge" technique to learn about the code we'll be working with. Run the command below in the terminal.
 
 ```
 code -d extra/chat_app-complete.txt api/chat_app.py
@@ -466,7 +455,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 
 <br><br>
 
-9. Look at what you merged into `ask()`:
+8. Look at what you merged into `ask()`:
    - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 5. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
    - `stream=True` turns the return value into an iterator - we print each chunk as it arrives instead of waiting for the whole answer. That is step 3's newline-delimited JSON, handled for you.
    - We accumulate the pieces into `reply` so we have the complete text to store in our history.
@@ -475,7 +464,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 
 <br><br>
 
-10. Now run it. At the `You:` prompt, ask the first question below, wait for the answer, then ask the follow-up - which has no meaning on its own. Watch the `[history: N messages]` counter grow after each turn; that's the conversation being resent in full every time. Exit with CTRL-C when you've seen it.
+9. Now run it. At the `You:` prompt, ask the first question below, wait for the answer, then ask the follow-up - which has no meaning on its own. Watch the `[history: N messages]` counter grow after each turn; that's the conversation being resent in full every time. Exit with CTRL-C when you've seen it.
 
 ```
 python api/chat_app.py
@@ -491,30 +480,8 @@ How would I work around that?
 
 <br><br>
 
-11. Let's prove the memory claim, in two stages. First, open the file, comment out the `messages.append({"role": "assistant", ...})` line by putting a `#` in front of it, and save. Run it again and ask the same two questions. Watch the `[history: N]` counter: it now climbs by **one** per turn instead of two, because only your side of the conversation is being kept. The follow-up still half-works - the model can see the question you asked, just not the answer it gave - so it re-derives from scratch instead of building on itself.
 
-   Now for full amnesia. Change the `ask(messages)` call to send only the system prompt and your latest turn:
-
-   ```
-   answer = ask([messages[0], messages[-1]])
-   ```
-
-   Run it again and ask the same two questions. This time the follow-up lands on nothing - the model will tell you it has no idea what you are referring to. **That is what stateless actually means:** the model remembers precisely what you put in the request, and nothing else.
-
-   When you're done, **undo both edits and save** so the file is correct if you come back to it.
-
-```
-code api/chat_app.py
-```
-```
-python api/chat_app.py
-```
-
-![The conversation loses its memory](./images/ollama29.png?raw=true "The conversation loses its memory")
-
-<br><br>
-
-12. Finally, the layer most developers actually reach for: a framework. LangChain has a native Ollama integration, and `langchain-ollama` is already installed. Open the example and run it.
+10. Finally, the layer most developers actually reach for: a framework. LangChain has a native Ollama integration, and `langchain-ollama` is already installed. Open the example and run it.
 
 ```
 code api/simple_langchain.py
@@ -619,13 +586,21 @@ ollama launch --help
 
 <br><br>
 
-9. Run it in configure-only mode. The `--config` flag writes the integration's settings and stops, instead of trying to start the tool - which is what we want here, since these tools are not installed in the codespace. Follow the prompts and pick the cloud model you pulled when it asks.
+9. Now actually launch one. **Claude Code is already installed in this codespace** (the devcontainer does it at creation time), so this is not a configure-and-stop exercise - a real coding agent starts, driven by a model running on Ollama's hardware. No Anthropic account and no API key: `ollama launch` points the tool at your Ollama endpoint instead of Anthropic's.
 
 ```
-ollama launch vscode --config --model gpt-oss:120b-cloud
+ollama launch claude --model gpt-oss:120b-cloud
 ```
 
-   **Note:** this is an interactive command. If a tool is not installed, it will tell you so - that is a normal outcome here and not a lab failure. The point is to see that wiring a real editor or agent to a local or cloud model is one command rather than an afternoon of environment variables.
+   **Seeing it start is the point.** A real agent came up, wired to a model you pulled ten minutes ago, with no config file and no second account. Look at what it reports as its model, then exit with `/exit`. If you want to try one question, ask something small - *"what does api/chat_app.py do?"* - and keep it to one. An agent makes several round trips per question rather than the single request every other step today sends, so a long session is the one thing here that could eat into your free tier.
+
+   **If Ollama refuses the model, read the error - it is the lesson.** `ollama launch` checks whether a model is *agent-capable* before handing it to a coding tool, because driving an agent needs reliable tool calling, not just good prose. Try the small local model and watch it say so:
+
+```
+ollama launch claude --model llama3.2:3b
+```
+
+   You get back something like *"llama3.2:3b does not work well with Claude Code. Try an agent-capable model like glm-5.2:cloud instead."* That one message is the clearest statement in this workshop of what a 3B model cannot do, and why Lab 4 exists. If the cloud model above is refused too, the error names alternatives - pull one with `ollama pull <name>` and rerun.
 
 <br><br>
 
