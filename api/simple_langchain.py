@@ -4,7 +4,7 @@
 # This is the fourth and last way into Ollama that we cover:
 #
 #   1. The CLI            ollama run                  (Lab 1)
-#   2. The raw REST API   curl .../api/chat           (Lab 3, steps 2 - 4)
+#   2. The raw REST API   curl .../api/chat           (Lab 3, steps 3 - 5)
 #   3. The Ollama library ollama.chat()               (chat_app.py)
 #   4. A framework        ChatOllama().invoke()       (this file)
 #
@@ -31,24 +31,29 @@ llm = ChatOllama(
 
 def single_turn(prompt):
     """One prompt in, one answer out - the LangChain equivalent of /api/generate."""
-    print(f"\n--- invoke() with {MODEL} ---")
+    print(f"\n--- invoke() with a single string (the /api/generate shape) ---")
+    print(f"    prompt: {prompt}")
     response = llm.invoke(prompt)
     print(response.content.strip())
 
 
 def multi_turn():
-    """A messages list - the same shape you sent to /api/chat by hand."""
-    print(f"\n--- invoke() with a message list ---")
+    """A messages list - the same conversation you sent to /api/chat in step 5."""
+    print("\n--- invoke() with a conversation (the /api/chat shape) ---")
     messages = [
-        ("system", "You are terse and concrete. Two sentences maximum."),
-        ("human", "Name one good use for a local LLM."),
-        ("ai", "Summarizing internal documents that cannot leave your network."),
-        ("human", "Why is that better than a hosted API?"),
+        ("system", "You are terse and concrete."),
+        ("human", "My server has 6 GB of RAM and no GPU."),
+        ("ai", "Noted - 6 GB, CPU only."),
+        ("human", "How much RAM does my server have?"),
     ]
+    for role, text in messages:
+        print(f"    {role:<7} {text}")
     response = llm.invoke(messages)
-    print(response.content.strip())
-    print("\nSame roles, same history-you-resend rule. LangChain did not add memory -")
-    print("we still passed the whole conversation. Ollama is still stateless.")
+    print(f"    reply   {response.content.strip()}")
+    print("\nThat is step 5's curl call, run through a framework instead:")
+    print("  LangChain system / human / ai  ==  API system / user / assistant")
+    print("Same roles, same array, same service on port 11434. LangChain added no")
+    print("memory - we still passed the whole conversation. Ollama is still stateless.")
 
 
 if __name__ == "__main__":

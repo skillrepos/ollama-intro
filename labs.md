@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.5 - 08/12/26
+## Revision 4.6 - 08/12/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -467,7 +467,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 <br><br>
 
 9. Look at what you merged into `ask()`:
-   - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 4. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
+   - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 5. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
    - `stream=True` turns the return value into an iterator - we print each chunk as it arrives instead of waiting for the whole answer. That is step 3's newline-delimited JSON, handled for you.
    - We accumulate the pieces into `reply` so we have the complete text to store in our history.
 
@@ -526,8 +526,8 @@ python api/simple_langchain.py "What is the capital of France?"
 ![Ollama through LangChain](./images/ollama30.png?raw=true "Ollama through LangChain")
 
    Three things to notice, and they are the point of this whole lab:
-   - `ChatOllama(model=..., temperature=..., num_predict=...)` sets **the same options** you typed into the `options` block in steps 2 - 4.
-   - The message list - `system`, `human`, `ai`, `human` - is **the same shape** you sent to `/api/chat` by hand in step 4.
+   - `ChatOllama(model=..., temperature=..., num_predict=...)` sets **the same options** you typed into the `options` block in steps 3 - 5.
+   - The message list - `system`, `human`, `ai`, `human` - is **the same shape** you sent to `/api/chat` by hand in step 5.
    - Underneath, LangChain is calling **the same endpoint** on the same local service. It did not add memory; the script still passes the whole conversation.
 
    A framework buys you one interface across many model providers - swap `ChatOllama` for a hosted provider's class and the rest of your chain is unchanged. It costs you a dependency and a layer of indirection to debug through. Now you know exactly what is underneath it.
