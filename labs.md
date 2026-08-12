@@ -399,9 +399,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array - and the quickest way to see what that array actually does is to ask the **same question twice**, once without it and once with it.
-
-   First, the follow-up question on its own. "That" refers to nothing, and the model will say so.
+5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. To see what that array actually buys you, ask the **same question twice** - once cold, once with a conversation in front of it. The question is about *your* machine, so no amount of training data can help: the answer either comes from the array or it doesn't come at all.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -410,12 +408,14 @@ curl -sS http://localhost:11434/api/chat -d '{
   "options": { "num_predict": 60 },
   "messages": [
     {"role": "system", "content": "You are terse and concrete."},
-    {"role": "user", "content": "Why is that better than a hosted API?"}
+    {"role": "user", "content": "How much RAM does my server have?"}
   ]
 }' | python3 -m json.tool
 ```
 
-   Now the identical question with a conversation in front of it. Notice we are *writing* the `assistant` turn ourselves - the model never said it. That is allowed, and it is the point: the array is a transcript you hand over, not a record of something that happened.
+   It cannot answer - and notice *how* it fails. It does not guess; it asks you for the details. It has no idea who you are, because this is the first thing it has ever seen from you.
+
+   Now give it those details, by putting them in the array. Notice we are *writing* the `assistant` turn ourselves; the model never said it. That is allowed, and it is the point - the array is a transcript you hand over, not a record of anything that happened.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -424,18 +424,18 @@ curl -sS http://localhost:11434/api/chat -d '{
   "options": { "num_predict": 60 },
   "messages": [
     {"role": "system", "content": "You are terse and concrete."},
-    {"role": "user", "content": "Name a good use for a local LLM."},
-    {"role": "assistant", "content": "Summarizing internal documents that cannot leave your network."},
-    {"role": "user", "content": "Why is that better than a hosted API?"}
+    {"role": "user", "content": "My server has 6 GB of RAM and no GPU."},
+    {"role": "assistant", "content": "Noted - 6 GB, CPU only."},
+    {"role": "user", "content": "How much RAM does my server have?"}
   ]
 }' | python3 -m json.tool
 ```
 
-![Multi-turn chat over the API](./images/ollama25.png?raw=true "Multi-turn chat over the API")
+   Now it answers: 6 GB. Same model, same options, same final question - the only thing that changed is the `messages` array, and `prompt_eval_count` goes from roughly 39 to 71. Those extra tokens *are* the memory.
 
-   Same model, same options, same final question. The only thing that changed is the `messages` array - and it is the difference between "what is *that*?" and a direct answer. **The array is the memory, and putting it there is your job.**
+   **This is the whole mechanism behind every "the AI knows about my project" feature you have ever used.** Nobody trained a model on your data. Something assembled an array like this one and sent it, on every single request.
 
-   Two details worth noting while you are here. Only the *last* message is ever answered; everything before it is context, which is why you get one reply and not two. And the token counts show the split - `prompt_eval_count` is everything you sent, `eval_count` is the handful it generated back. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
+   Two details worth noting while you are here. Only the *last* message is ever answered - everything before it is context, which is why you get one reply and not two. And `eval_count` is the handful of tokens generated back against all that input. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
 <br><br>
 
 6. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
