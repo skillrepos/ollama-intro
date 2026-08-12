@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.4 - 08/10/26
+## Revision 4.5 - 08/12/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -341,7 +341,7 @@ ollama show --modelfile shellcoach
 
 **Purpose: In this lab, we'll work through the three developer-facing ways into Ollama - the raw HTTP API with curl, the official Python library, and a framework - and see that all three hit the same endpoint. (approx. 12 minutes)**
 
-1. Everything you've done so far went through a local HTTP service listening on port 11434. Confirm it's there with the first command - you should get back `Ollama is running`. The second gives you the same information as `ollama list`, but as JSON your code could consume. Then open the warmup program from Lab 1: `/api/tags` is where it gets its model list, and the whole warmup trick is a POST to `/api/generate` with a model and **no prompt**, which loads the weights and returns without generating anything.
+1. Everything you've done so far went through a local HTTP service listening on port 11434. Confirm it's there with the first command - you should get back `Ollama is running`. The second gives you the same information as `ollama list`, but as JSON your code could consume. 
 
 ```
 curl http://localhost:11434
@@ -349,15 +349,24 @@ curl http://localhost:11434
 ```
 curl -sS http://localhost:11434/api/tags | python3 -m json.tool
 ```
-```
-code api/warmup.py
-```
 
 ![Listing models over the API](./images/ollama22.png?raw=true "Listing models over the API")
 
 <br><br>
 
-2. Now let's actually generate something. `/api/generate` is the single-turn endpoint - one prompt in, one completion out. `"stream": false` tells Ollama to send one complete JSON object when it's finished rather than a stream of fragments, and `num_predict` caps how long the answer can run.
+2. (Optional) Open the warmup program from Lab 1: `/api/tags` is where it gets its model list, and the whole warmup trick is a POST to `/api/generate` with a model and **no prompt**, which loads the weights and returns without generating anything.
+
+
+```
+code api/warmup.py
+```
+
+![Code using the API](./images/ollama52.png?raw=true "Code using the API")
+
+<br><br>
+
+
+3. Now let's actually generate something. `/api/generate` is the single-turn endpoint - one prompt in, one completion out. `"stream": false` tells Ollama to send one complete JSON object when it's finished rather than a stream of fragments, and `num_predict` caps how long the answer can run.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -376,7 +385,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-3. Now the same request with streaming left on (it's the default). Instead of one object, you get a stream of newline-delimited JSON, one per token, with a final object where `done` is `true`. This is what makes a chat UI feel responsive - and on a CPU-only box it's the difference between usable and apparently broken.
+4. Now the same request with streaming left on (it's the default). Instead of one object, you get a stream of newline-delimited JSON, one per token, with a final object where `done` is `true`. This is what makes a chat UI feel responsive - and on a CPU-only box it's the difference between usable and apparently broken.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -390,7 +399,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-4. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. Notice we are sending the whole conversation - a system message, a user turn, the assistant's reply, and a new user turn that only makes sense in context. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
+5. `/api/generate` has no memory. For multi-turn conversation there's `/api/chat`, which takes a *messages* array. Notice we are sending the whole conversation - a system message, a user turn, the assistant's reply, and a new user turn that only makes sense in context. **Keep an eye on this shape; you'll see the exact same one twice more before the lab is over.**
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -410,11 +419,11 @@ curl -sS http://localhost:11434/api/chat -d '{
 
 <br><br>
 
-5. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
+6. That's the key mental model for the rest of the lab: **Ollama is stateless.** It did not remember anything between those calls - we resent the entire history. Any "memory" in an application is something your application is doing. We're about to write that code.
 
 <br><br>
 
-6. The official Python library is a thin, typed wrapper over those same endpoints, and it's already installed. We've provided a chat application with two pieces missing. Open it either by clicking on [**api/chat_app.py**](./api/chat_app.py) or with the command below.
+7. The official Python library is a thin, typed wrapper over those same endpoints, and it's already installed. We've provided a chat application with two pieces missing. Open it either by clicking on [**api/chat_app.py**](./api/chat_app.py) or with the command below.
 
 ```
 code api/chat_app.py
@@ -426,7 +435,7 @@ code api/chat_app.py
 
 <br><br>
 
-7. As before, we'll use the "view differences and merge" technique to learn about the code we'll be working with. Run the command below in the terminal.
+8. As before, we'll use the "view differences and merge" technique to learn about the code we'll be working with. Run the command below in the terminal.
 
 ```
 code -d extra/chat_app-complete.txt api/chat_app.py
@@ -438,7 +447,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 
 <br><br>
 
-8. Look at what you merged into `ask()`:
+9. Look at what you merged into `ask()`:
    - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 4. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
    - `stream=True` turns the return value into an iterator - we print each chunk as it arrives instead of waiting for the whole answer. That is step 3's newline-delimited JSON, handled for you.
    - We accumulate the pieces into `reply` so we have the complete text to store in our history.
@@ -447,7 +456,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 
 <br><br>
 
-9. Now run it. At the `You:` prompt, ask the first question below, wait for the answer, then ask the follow-up - which has no meaning on its own. Watch the `[history: N messages]` counter grow after each turn; that's the conversation being resent in full every time. Exit with CTRL-C when you've seen it.
+10. Now run it. At the `You:` prompt, ask the first question below, wait for the answer, then ask the follow-up - which has no meaning on its own. Watch the `[history: N messages]` counter grow after each turn; that's the conversation being resent in full every time. Exit with CTRL-C when you've seen it.
 
 ```
 python api/chat_app.py
@@ -463,7 +472,7 @@ How would I work around that?
 
 <br><br>
 
-10. Let's prove the memory claim, in two stages. First, open the file, comment out the `messages.append({"role": "assistant", ...})` line by putting a `#` in front of it, and save. Run it again and ask the same two questions. Watch the `[history: N]` counter: it now climbs by **one** per turn instead of two, because only your side of the conversation is being kept. The follow-up still half-works - the model can see the question you asked, just not the answer it gave - so it re-derives from scratch instead of building on itself.
+11. Let's prove the memory claim, in two stages. First, open the file, comment out the `messages.append({"role": "assistant", ...})` line by putting a `#` in front of it, and save. Run it again and ask the same two questions. Watch the `[history: N]` counter: it now climbs by **one** per turn instead of two, because only your side of the conversation is being kept. The follow-up still half-works - the model can see the question you asked, just not the answer it gave - so it re-derives from scratch instead of building on itself.
 
    Now for full amnesia. Change the `ask(messages)` call to send only the system prompt and your latest turn:
 
@@ -486,7 +495,7 @@ python api/chat_app.py
 
 <br><br>
 
-11. Finally, the layer most developers actually reach for: a framework. LangChain has a native Ollama integration, and `langchain-ollama` is already installed. Open the example and run it.
+12. Finally, the layer most developers actually reach for: a framework. LangChain has a native Ollama integration, and `langchain-ollama` is already installed. Open the example and run it.
 
 ```
 code api/simple_langchain.py
