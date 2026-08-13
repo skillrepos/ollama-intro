@@ -1,14 +1,19 @@
-# --- Core: the official Ollama Python library (Lab 3) ---
+# Python packages for the workshop's sample programs.
+#
+# These are pre-installed into /opt/py_env when the dev container image is
+# built. Changing this file means the image must be rebuilt and pushed - see
+# IMAGEMAINTENANCE.md. scripts/pysetup.sh only installs from here on the
+# fallback path, when no prebuilt environment is present.
+
+# --- The official Ollama Python library (Lab 3: api/chat_app.py) ---
 ollama>=0.6.2
 
-# --- Raw REST access without a client library (Lab 3 / take-home Lab 6) ---
+# --- Raw HTTP, no client library (api/warmup.py, Lab 5: api/structured_output.py) ---
 requests>=2.32.0
 
-# --- Framework layer: LangChain's Ollama integration (Lab 3) ---
+# --- Framework layer: LangChain's Ollama integration (Lab 3: api/simple_langchain.py) ---
 langchain-ollama>=1.1.0
 
-# --- OpenAI-compatible endpoint demo (take-home Lab 7) ---
+# --- OpenAI-compatible endpoint and API-key cloud route
+#     (Lab 5: api/openai_compat.py, api/cloud_chat.py) ---
 openai>=1.99.0
-
-# --- Nicer terminal output in the sample apps ---
-rich>=13.7.0

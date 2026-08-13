@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.3 - 08/12/26**
+**Revision 4.4 - 08/13/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
 
@@ -46,7 +46,7 @@ Click here ➡️  [![Open in GitHub Codespaces](https://github.com/codespaces/b
 
 ![Creating new codespace from button](./images/ollama47.png?raw=true "Creating new codespace from button")
 
-This will run for several minutes while it gets everything ready, including downloading all dependencies, setting up the Python environment and pulling a local LLM for us to use.
+This runs for a couple of minutes while it pulls the prepared course image, which already contains the Python environment, Ollama, and the workshop's default model. You will pull a second model yourself in Lab 1.
 
 The codespace is ready to use when you see output in the terminal similar to the following.
 

@@ -1,10 +1,22 @@
 {
-   // "build": { "dockerfile": "Dockerfile" },
-    "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+    // Prebuilt image - see .devcontainer/Dockerfile and IMAGEMAINTENANCE.md.
+    // Everything slow (OS packages, Node, Claude Code, the Python venv, the
+    // Ollama binary, and BOTH workshop models) is already inside it.
+    //
+    // For a fork, or if the GHCR image is ever unavailable, comment out "image"
+    // and uncomment "build" below. "context": ".." is required because the
+    // Dockerfile COPYs requirements.txt from the repo root.
+    "image": "ghcr.io/skillrepos/ollama-intro-devcontainer:latest",
+    // "build": { "dockerfile": "Dockerfile", "context": ".." },
+
     "remoteEnv": {
         "OLLAMA_MODEL": "llama3.2:3b",
-        "OLLAMA_HOST": "127.0.0.1:11434"
+        "OLLAMA_HOST": "127.0.0.1:11434",
+        // Matches the Dockerfile - the baked-in model store.
+        "OLLAMA_MODELS": "/opt/ollama-models",
+        "OLLAMA_KEEP_ALIVE": "-1"
     },
+
     // Ollama's API is the only port anyone needs. Ollama also spawns one
     // "runner" child process per loaded model, each on a random high port, and
     // VS Code auto-forwards those - so the PORTS panel fills up with entries
@@ -14,18 +26,18 @@
         "11434": { "label": "Ollama API", "onAutoForward": "silent" }
     },
     "otherPortsAttributes": { "onAutoForward": "ignore" },
+
     "hostRequirements": {
        "cpus": 4,
        "memory": "16gb",
        "storage": "32gb"
     },
-    "features": {
-       "ghcr.io/devcontainers/features/docker-from-docker:1": {},
-       "ghcr.io/devcontainers/features/github-cli:1": {},
-       "ghcr.io/devcontainers/features/python:1": {},
-       // Node is here only so Claude Code can be installed for Lab 4 step 9.
-       "ghcr.io/devcontainers/features/node:1": {}
-    },
+
+    // No "features" block. Python and Node are installed in the Dockerfile.
+    // docker-from-docker and github-cli were dropped outright - nothing in the
+    // labs, README, or scripts uses docker or gh, and each feature added
+    // minutes to every student's container build.
+
     "customizations": {
         "vscode": {
             "settings": {
@@ -54,9 +66,14 @@
             }
         }
     },
-    // The Merge Info extension install lives HERE, not in postAttachCommand.
-    // postCreate runs without an interactive terminal, so nothing can interrupt it.
-    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh; code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true; npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || sudo npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true",
+
+    // What is left at create time: copy the prebuilt venv into the workspace,
+    // start Ollama, and install the Merge Info extension. VS Code extensions
+    // live in the server directory rather than the image, so that one cannot
+    // be baked in. postCreate runs without an interactive terminal, so nothing
+    // can interrupt it.
+    "postCreateCommand": "bash -i scripts/pysetup.sh py_env && bash -i scripts/startup_ollama.sh; code --install-extension ${containerWorkspaceFolder}/.devcontainer/merge-info-0.1.0.vsix --force || true",
+
     // Detached on purpose: VS Code extensions (Python, Git) relaunch the
     // post-attach terminal and send a Ctrl+C, which kills anything running
     // in the foreground there. setsid+nohup puts this out of its reach.

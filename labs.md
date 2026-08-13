@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.8 - 08/12/26
+## Revision 4.9 - 08/13/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -52,7 +52,28 @@ ollama --version
 
 <br><br>
 
-2. Now let's warm up. The slowest prompt you will ever send is the first one, because the model weights have to be read off disk into memory before a single token comes back. The program below pays that cost once, up front, for both workshop models - so no lab step has to. Run it and watch the load times.
+2. Before running anything, let's see what we already have - and add to it. The codespace image ships with the workshop's default model already downloaded, so `list` starts with a single entry. Notice the *NAME*, *ID*, *SIZE*, and *MODIFIED* columns; the size shown is the size on disk, which is a good first proxy for how much memory the model will want.
+
+```
+ollama list
+```
+
+   Now let's add a second model. **`ollama pull` is how you get any model onto a machine** - the single command you will use most often outside this workshop. We want the 1-billion-parameter Llama 3.2 next to the 3B so that Lab 2 can compare them. It is about 1.3 GB, so give it a few seconds, and watch how the download is split into layers.
+
+```
+ollama pull llama3.2:1b
+```
+```
+ollama list
+```
+
+![Listing installed models](./images/ollama7.png?raw=true "Listing installed models")
+
+   Run `list` again and the new model is there alongside the first. Models are stored as shared layers, so pulling a second tag of something you already have downloads only what is genuinely different.
+
+<br><br>
+
+3. Now let's warm up. The slowest prompt you will ever send is the first one, because the model weights have to be read off disk into memory before a single token comes back. The program below pays that cost once, up front, for both models - so no lab step has to. Run it and watch the load times.
 
 ```
 python api/warmup.py
@@ -63,16 +84,6 @@ python api/warmup.py
    Those seconds are now *not* charged to your first real prompt. We'll look at how this program works in Lab 3 - it is four lines of HTTP.
 
    **If that command reports it could not reach Ollama**, the background service is not running. Start it with `bash scripts/startOllama.sh` and try again.
-
-<br><br>
-
-3. Now let's see what models are already installed. Notice the *NAME*, *ID*, *SIZE*, and *MODIFIED* columns. The size shown is the size on disk, which is a good first proxy for how much memory the model will want.
-
-```
-ollama list
-```
-
-![Listing installed models](./images/ollama7.png?raw=true "Listing installed models")
 
 <br><br>
 
@@ -520,7 +531,7 @@ ollama signin
 
 <br><br>
 
-2. Cloud models carry a `-cloud` tag. Pulling one downloads no weights at all - it just registers the model locally so your machine knows where to route requests. Notice how fast this is compared to the multi-gigabyte pulls at setup time.
+2. Cloud models carry a `-cloud` tag. Pulling one downloads no weights at all - it just registers the model locally so your machine knows where to route requests. Notice how fast this is compared to the 1.3 GB pull you ran yourself back in Lab 1.
 
    **Cloud model names change frequently. If the name below is gone, open https://ollama.com/search?c=cloud and substitute any model whose tag ends in `-cloud`.**
 

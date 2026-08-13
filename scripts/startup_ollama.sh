@@ -1,97 +1,80 @@
-#!/bin/bash
-# startup_ollama.sh - Install Ollama, start the service, and pre-pull/warm the lab model.
-# Run once at codespace creation time (postCreateCommand).
+#!/usr/bin/env bash
+# startup_ollama.sh - bring Ollama up at codespace creation time.
+#
+# With the prebuilt image this is nearly a no-op: the binary is already
+# installed and both workshop models are already in /opt/ollama-models. All
+# that is left is starting the server and warming the default model.
+#
+# Every install/pull below is CONDITIONAL so that this script still works on a
+# plain base image (a fork, or a local Dev Container build). Do not make any of
+# them unconditional - that would re-download things the image already has.
 
 MODEL="${OLLAMA_MODEL:-llama3.2:3b}"
 
 echo "========================================"
-echo "Ollama Startup & Warmup Script"
+echo "Ollama startup"
 echo "Lab model: $MODEL"
 echo "========================================"
 echo ""
 
-# Step 1: Check and install Ollama if needed
-echo "Step 1: Checking for Ollama installation..."
-if command -v ollama &> /dev/null; then
-    echo "  Ollama is already installed"
+# --- Ollama binary -----------------------------------------------------------
+if command -v ollama > /dev/null 2>&1; then
+    echo "Ollama already installed (baked into the image)."
 else
-    # The Ollama installer extracts a zstd-compressed tarball. The devcontainer base
-    # image does not ship zstd, and without it the install fails with
-    # "ERROR: This version requires zstd for extraction".
-    if ! command -v zstd &> /dev/null; then
-        echo "  Installing zstd (required by the Ollama installer)..."
-        sudo apt-get update -qq && sudo apt-get install -y -qq zstd
-    fi
-    echo "  Installing Ollama..."
+    echo "Installing Ollama..."
+    # The installer extracts a zstd tarball; the stock base image lacks zstd.
+    command -v zstd > /dev/null 2>&1 || \
+        (sudo apt-get update -qq && sudo apt-get install -y -qq zstd)
     curl -fsSL https://ollama.com/install.sh | sh
-    if ! command -v ollama &> /dev/null; then
-        echo "  ERROR: Ollama install failed - the ollama command is still not on PATH."
-        echo "  Nothing below this point will work. See the output above."
+    if ! command -v ollama > /dev/null 2>&1; then
+        echo "  ERROR: Ollama install failed - nothing below will work."
         exit 1
     fi
-    echo "  Ollama installed"
 fi
 echo ""
 
-# Step 2: Start the Ollama service
-echo "Step 2: Starting Ollama service..."
-if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
-    echo "  Ollama service already running"
+# --- Server ------------------------------------------------------------------
+if curl -sS http://localhost:11434/api/tags > /dev/null 2>&1; then
+    echo "Ollama service already running."
 else
-    # Keep models loaded for the life of the codespace (default is 5 minutes).
+    echo "Starting Ollama..."
     export OLLAMA_KEEP_ALIVE=-1
     nohup ollama serve > /tmp/ollama.log 2>&1 &
-    echo "  Ollama started (log: /tmp/ollama.log)"
+    ATTEMPTS=0
+    until curl -sS http://localhost:11434/api/tags > /dev/null 2>&1; do
+        ATTEMPTS=$((ATTEMPTS+1))
+        if [ $ATTEMPTS -gt 60 ]; then
+            echo "  ERROR: Ollama did not become ready. See /tmp/ollama.log"
+            exit 1
+        fi
+        sleep 1
+    done
+    echo "  ready (log: /tmp/ollama.log)"
 fi
 echo ""
 
-# Step 3: Wait for the service to answer
-echo "Step 3: Waiting for Ollama to be ready..."
-sleep 3
-ATTEMPTS=0
-until curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do
-    ATTEMPTS=$((ATTEMPTS+1))
-    if [ $ATTEMPTS -gt 60 ]; then
-        echo "  ERROR: Ollama did not become ready. See /tmp/ollama.log"
-        exit 1
-    fi
-    echo "  Waiting for Ollama server..."
-    sleep 1
-done
-echo "  Ollama server is ready"
-echo ""
-
-# Step 4: Pull the lab models
-echo "Step 4: Pulling lab models (this may take several minutes)..."
-for m in "$MODEL" "llama3.2:1b"; do
-    if ollama list | grep -q "${m%%:*}.*${m##*:}"; then
+# --- Models ------------------------------------------------------------------
+# Only the default model. llama3.2:1b is intentionally left out: students pull
+# it themselves in Lab 1 step 2. Adding it here would make that step a no-op.
+for m in "$MODEL"; do
+    if ollama list 2>/dev/null | grep -q "^${m%%:*}[[:space:]]*${m##*:}\|^${m}[[:space:]]"; then
         echo "  $m already present"
     else
-        echo "  Pulling $m ..."
+        echo "  Pulling $m (not in the image) ..."
         ollama pull "$m"
     fi
 done
 echo ""
 
-# Step 5: Warm up the primary model so the first lab prompt is not the slow one
-echo "Step 5: Warming up $MODEL ..."
-curl -s -X POST http://localhost:11434/api/generate -d "{
-  \"model\": \"$MODEL\",
-  \"prompt\": \"Hello\",
-  \"stream\": false
-}" > /dev/null
-echo "  Model warmed up and ready"
+# --- Warm the default model so the first lab prompt is not the slow one ------
+echo "Warming $MODEL ..."
+curl -sS -X POST http://localhost:11434/api/generate \
+     -d "{\"model\": \"$MODEL\", \"keep_alive\": -1}" > /dev/null
 echo ""
 
-# Step 6: Status
 echo "========================================"
-echo "Status: Ollama Ready for Labs"
-echo "========================================"
-echo ""
-echo "Installed models:"
 ollama list
 echo ""
 echo "Ollama API endpoint: http://localhost:11434"
-echo ""
 echo "Ready for lab exercises!"
 echo "========================================"
