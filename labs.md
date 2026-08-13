@@ -26,7 +26,7 @@
 
 **Labs 1 - 4 are what we do together in the session.** Lab 5 is written to the same standard and is yours to work through afterward - it covers the two developer features the clock does not allow us to type through, plus the troubleshooting commands you'll want when you are working on your own.
 
-**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with an optional step that gets you signed in early - **do it during the break** and Lab 4 will go much faster.
+**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with a one-command step that gets you signed in early - **run it before you reach Lab 4** (in a live session, the break is the moment) and Lab 4 starts on the interesting part.
 
 Steps marked **(Optional)** inside a lab are there for people who finish early. Skip them if the room is moving on.
 
@@ -173,7 +173,7 @@ cat requirements.txt | ollama run llama3.2:3b "What is this dependency file for?
 
 <br><br>
 
-12. **(Optional - but please do this during the break.)** Lab 4 uses a cloud-hosted model, which needs a free ollama.com account. Getting signed in now means Lab 4 starts on the interesting part instead of on a signup form. Run the command below; it prints a URL. Open it, create a free account or sign in, and come back.
+12. **Get signed in now, not in Lab 4.** Lab 4 uses a cloud-hosted model, which needs a free ollama.com account - creating one takes about a minute. Doing it here means Lab 4 starts on the interesting part instead of on a signup form. **In a live session, this is what the break is for.** Run the command below; it prints a URL. Open it, create a free account or sign in, and come back. (If you cannot create an account, skip this - Lab 4 is the only lab that needs one.)
 
 ```
 ollama signin
@@ -508,9 +508,9 @@ python api/simple_langchain.py "What is the capital of France?"
 
 **Purpose: In this lab, we'll run a model far too large for this machine using the same commands and the same code, then use `ollama launch` to point a real coding tool at Ollama without editing a single config file. (approx. 9 minutes)**
 
-**Note: this lab needs a free ollama.com account. If you ran the optional signin step at the end of Lab 1, you are already set. If not, step 1 handles it.**
+**Note: this lab needs a free ollama.com account. If you ran the signin step at the end of Lab 1, you are already set. If not, step 1 handles it - it costs about a minute.**
 
-1. Ollama Cloud runs large models on Ollama's hardware and exposes them through the exact API you have been using all workshop. The free tier is enough for this lab. If you already signed in during the break, this will tell you so; otherwise it prints a URL - open it, create a free account, and come back.
+1. Ollama Cloud runs large models on Ollama's hardware and exposes them through the exact API you have been using all workshop. The free tier is enough for this lab. If you already signed in at the end of Lab 1, this will tell you so; otherwise it prints a URL - open it, create a free account, and come back.
 
 ```
 ollama signin

@@ -2,9 +2,24 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.2 - 08/10/26**
+**Revision 4.3 - 08/12/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
+
+<br/>
+
+## Before you start
+
+**Everything in this workshop is free.** No paid API keys, no credit card. Labs 1 - 3 run entirely on local
+models in your codespace.
+
+**Lab 4 uses a large cloud-hosted model, which needs a free ollama.com account.** Creating one takes about a
+minute. You do not need it to start - Lab 1 ends with a one-command `ollama signin` step, and Lab 4 will
+prompt you if you skipped it. But if you would rather not spend workshop time on a signup form, create the
+account ahead of time at https://ollama.com.
+
+If your organization blocks account creation on external sites, that is fine - Lab 4 is the only lab that
+needs it, and you can follow along without signing in.
 
 <br/>
 
