@@ -50,7 +50,7 @@ This runs for a couple of minutes while it pulls the prepared course image, whic
 
 The codespace is ready to use when you see output in the terminal similar to the following.
 
-![Ready to use](./images/ollama49.png?raw=true "Ready to use")
+![Ready to use](./images/ollama53.png?raw=true "Ready to use")
 
 **4. If VS Code shows a workspace trust prompt, click *Trust*.**
 
