@@ -1,15 +1,21 @@
 {
-    "name": "Ollama workshop (prebuilt image - fast)",
+    "name": "Ollama workshop (build from source - forks / no GHCR)",
 
-    // Prebuilt image - see .devcontainer/Dockerfile and IMAGEMAINTENANCE.md.
-    // Everything slow (OS packages, Node, Claude Code, the Python venv, the
-    // Ollama binary, and BOTH workshop models) is already inside it.
+    // FALLBACK CONFIGURATION - pick this from the "Dev container configuration"
+    // dropdown on the codespace creation page if the prebuilt image will not
+    // pull: a fork of this repo where the GHCR package is private, an org that
+    // blocks external registries, or a GHCR outage.
+    // Builds the SAME Dockerfile the published image is built from, so this
+    // config produces an identical environment - it just takes 10-20 minutes
+    // the first time instead of pulling a ready-made image.
     //
-    // For a fork, or if the GHCR image is ever unavailable, comment out "image"
-    // and uncomment "build" below. "context": ".." is required because the
-    // Dockerfile COPYs requirements.txt from the repo root.
-    "image": "ghcr.io/skillrepos/ollama-intro-devcontainer:latest",
-    // "build": { "dockerfile": "Dockerfile", "context": ".." },
+    // Paths are relative to THIS file, which lives one level below
+    // .devcontainer/ - hence "../Dockerfile" and a context of "../.." (the
+    // repo root, which the Dockerfile's COPY requirements.txt needs).
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": "../.."
+    },
 
     "remoteEnv": {
         "OLLAMA_MODEL": "llama3.2:3b",

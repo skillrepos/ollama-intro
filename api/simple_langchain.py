@@ -4,7 +4,7 @@
 # This is the fourth and last way into Ollama that we cover:
 #
 #   1. The CLI            ollama run                  (Lab 1)
-#   2. The raw REST API   curl .../api/chat           (Lab 3, steps 3 - 5)
+#   2. The raw REST API   curl .../api/chat           (Lab 3, steps 2 - 4)
 #   3. The Ollama library ollama.chat()               (chat_app.py)
 #   4. A framework        ChatOllama().invoke()       (this file)
 #
@@ -38,7 +38,7 @@ def single_turn(prompt):
 
 
 def multi_turn():
-    """A messages list - the same conversation you sent to /api/chat in step 5."""
+    """A messages list - the same conversation you sent to /api/chat in step 4."""
     print("\n--- invoke() with a conversation (the /api/chat shape) ---")
     messages = [
         ("system", "You are terse and concrete."),
@@ -50,7 +50,7 @@ def multi_turn():
         print(f"    {role:<7} {text}")
     response = llm.invoke(messages)
     print(f"    reply   {response.content.strip()}")
-    print("\nThat is step 5's curl call, run through a framework instead:")
+    print("\nThat is step 4's curl call, run through a framework instead:")
     print("  LangChain system / human / ai  ==  API system / user / assistant")
     print("Same roles, same array, same service on port 11434. LangChain added no")
     print("memory - we still passed the whole conversation. Ollama is still stateless.")

@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 4.9 - 08/13/26
+## Revision 5.0 - 08/13/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -87,7 +87,7 @@ python api/warmup.py
 
 <br><br>
 
-4. Let's run one. The command below starts an interactive session with the 3-billion-parameter Llama 3.2 model - our default for the workshop. Because we warmed it up in step 2, it should come back at the `>>>` prompt almost immediately.
+4. Let's run one. The command below starts an interactive session with the 3-billion-parameter Llama 3.2 model - our default for the workshop. Because we warmed it up in step 3, it should come back at the `>>>` prompt almost immediately.
 
 ```
 ollama run llama3.2:3b
@@ -236,11 +236,13 @@ time ollama run llama3.2:3b "What is a vector embedding? One sentence."
 
 <br><br>
 
-3. Every model in Ollama has a Modelfile behind it, even the ones you download. Let's look at the recipe that ships with Llama 3.2. Notice the `FROM` line pointing at a blob, the `TEMPLATE` block, and any baked-in `PARAMETER` values. We're about to write one of these ourselves.
+3. Every model in Ollama has a Modelfile behind it, even the ones you download. Let's look at the recipe that ships with Llama 3.2. Notice the `FROM` line pointing at a blob, the `TEMPLATE` block, and the baked-in `PARAMETER stop` values. We're about to write one of these ourselves.
 
 ```
-ollama show --modelfile llama3.2:3b
+ollama show --modelfile llama3.2:3b | head -55
 ```
+
+   The full output is over 200 lines, but everything interesting is in the first 55 - the rest is the Llama 3.2 license text. Drop the `| head -55` if you want to scroll through all of it.
 
 ![Viewing a model's Modelfile](./images/ollama16.png?raw=true "Viewing a model's Modelfile")
 
@@ -280,7 +282,7 @@ code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 
 <br><br>
 
-7. Now build the model, then confirm it exists. This takes a few seconds - it isn't retraining anything, just layering our instructions on top of existing weights. Notice in the listing that `shellcoach` shows a size similar to the base model, because it shares the same underlying blobs rather than copying them.
+7. Now build the model, then confirm it exists. This takes 15-30 seconds - it isn't retraining anything, just layering our instructions on top of existing weights. Notice in the listing that `shellcoach` shows a size similar to the base model, because it shares the same underlying blobs rather than copying them.
 
 ```
 ollama create shellcoach -f modelfiles/Modelfile.shellcoach
@@ -293,13 +295,13 @@ ollama list
 
 <br><br>
 
-8. Ollama treats `shellcoach` as its own model, so it has to be loaded into memory separately the first time you use it. Warm it up now with the same program from Lab 1 - this time passing a model name.
+8. Warm `shellcoach` up now with the same program from Lab 1 - this time passing a model name.
 
 ```
 python api/warmup.py shellcoach
 ```
 
-   Notice how much faster this load is than the very first one in Lab 1. The underlying weight files are already in the operating system's disk cache, because `shellcoach` shares them with `llama3.2:3b`.
+   It comes back almost instantly, and here is why that is interesting: `shellcoach` is a new *name*, but it is not new *weights*. It points at the same blobs as `llama3.2:3b`, which is already resident, so there is nothing to read off disk. Run `ollama ps` afterwards and you will see `llama3.2:3b` still listed and no separate `shellcoach` entry - **a customized model costs you a Modelfile, not another copy of the model in memory.**
 
 <br><br>
 
@@ -326,7 +328,7 @@ ollama run llama3.2:3b "How do I find files modified in the last 24 hours?"
    - **The command comes first, in a code block** - the SYSTEM rules plus the seeded MESSAGE exchange. The base model buries its command in prose, often after a paragraph of preamble.
    - **Short and it stops** - `num_predict 160` caps the answer. The base model tends to ramble through multiple "methods," including Windows and Mac ones nobody asked about.
    - **Same format every time** - `temperature 0.2` is baked in. Re-run the shellcoach command and the shape repeats; the base model at its default temperature varies run to run.
-   - **A `CAUTION:` line when a command is destructive** - a behavior that exists only because one SYSTEM rule asked for it.
+   - **A `CAUTION:` line whenever it judges a command risky** - a behavior that exists only because one SYSTEM rule asked for it. It is the rule firing, not the model reasoning: at 3B it will sometimes attach a caution to a perfectly harmless `find`, and word it wrongly. Step 12 gives it a genuinely destructive command to answer.
 
    One thing that does **not** change: correctness. Both models share the exact same weights, so a mistake the base model would make (watch the `find -mtime` sign) shellcoach can make too - just more tersely. Customization buys you *behavior*, not *knowledge*.
 
@@ -340,7 +342,26 @@ ollama show --modelfile shellcoach
 
 <br><br>
 
-12. (Optional) Two things to try if you finish early. First, test the safety rule we wrote into the system prompt and look for the `CAUTION:` line. Then open the Modelfile, change `PARAMETER temperature 0.2` to `PARAMETER temperature 1.4`, save, rebuild, and rerun - re-running `ollama create` with the same name simply replaces the model. 
+12. (Optional) Two things to try if you finish early.
+
+   First, hand it a genuinely destructive command and watch the safety rule fire - the answer should lead with the command and then a `CAUTION:` line.
+
+```
+ollama run shellcoach "How do I delete every .tmp file under /var/log?"
+```
+
+   Then take the guard rails off. Open the Modelfile, change `PARAMETER temperature 0.2` to `PARAMETER temperature 1.4`, save, rebuild, and rerun the same question a few times - the answers will start to vary. Re-running `ollama create` with the same name simply replaces the model.
+
+```
+code modelfiles/Modelfile.shellcoach
+```
+```
+ollama create shellcoach -f modelfiles/Modelfile.shellcoach
+```
+```
+ollama run shellcoach "How do I delete every .tmp file under /var/log?"
+```
+
 
 
 <p align="center">
@@ -431,6 +452,8 @@ curl -sS http://localhost:11434/api/chat -d '{
 }' | python3 -m json.tool
 ```
 
+![The same question, cold and with history](./images/ollama25.png?raw=true "The same question, cold and with history")
+
    Now it answers: 6 GB. Same model, same options, same final question - the only thing that changed is the `messages` array, and `prompt_eval_count` goes from roughly 39 to 71. Those extra tokens *are* the memory.
 
    **This is the whole mechanism behind every "the AI knows about my project" feature you have ever used.** Nobody trained a model on your data. Something assembled an array like this one and sent it, on every single request.
@@ -467,7 +490,7 @@ code -d extra/chat_app-complete.txt api/chat_app.py
 <br><br>
 
 8. Look at what you merged into `ask()`:
-   - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 5. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
+   - `ollama.chat(...)` takes the same `model`, `messages`, and `options` you sent as raw JSON in step 4. The library is not doing anything you couldn't do with curl - it is saving you the typing and giving you types.
    - `stream=True` turns the return value into an iterator - we print each chunk as it arrives instead of waiting for the whole answer. That is step 3's newline-delimited JSON, handled for you.
    - We accumulate the pieces into `reply` so we have the complete text to store in our history.
 
@@ -504,8 +527,8 @@ python api/simple_langchain.py "What is the capital of France?"
 ![Ollama through LangChain](./images/ollama30.png?raw=true "Ollama through LangChain")
 
    Three things to notice, and they are the point of this whole lab:
-   - `ChatOllama(model=..., temperature=..., num_predict=...)` sets **the same options** you typed into the `options` block in steps 3 - 5.
-   - The message list - `system`, `human`, `ai`, `human` - is **the same shape** you sent to `/api/chat` by hand in step 5.
+   - `ChatOllama(model=..., temperature=..., num_predict=...)` sets **the same options** you typed into the `options` block in steps 2 - 4.
+   - The message list - `system`, `human`, `ai`, `human` - is **the same shape** you sent to `/api/chat` by hand in step 4.
    - Underneath, LangChain is calling **the same endpoint** on the same local service. It did not add memory; the script still passes the whole conversation.
 
    A framework buys you one interface across many model providers - swap `ChatOllama` for a hosted provider's class and the rest of your chain is unchanged. It costs you a dependency and a layer of indirection to debug through. Now you know exactly what is underneath it.
@@ -554,14 +577,16 @@ ollama list
 4. Now run it. This is a 120-billion-parameter model - roughly forty times the size of the one you have been using, and impossible to fit in this codespace. **The command is identical to every other `ollama run` you have typed today.**
 
 ```
-ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins."
+ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins. Answer in under 120 words."
 ```
+
+   (The word limit matters. Left unbounded this model will happily write two screens of tables - accurate, but it buries the point and spends free-tier tokens.)
 
 ![Running a cloud-hosted model](./images/ollama33.png?raw=true "Running a cloud-hosted model")
 
 <br><br>
 
-5. Two things to notice about that answer: it arrived faster than your local 3B model despite being forty times larger (someone else's GPUs are doing the work), and it is visibly better reasoned. That is the trade you are making - speed and quality in exchange for your prompt leaving the machine.
+5. Two things to notice about that answer. It arrived **faster** than your local 3B model despite being forty times larger - asked the same capped question, the 3B takes around 14 seconds here and the cloud model around 3, because someone else's GPUs are doing the work. And it is visibly better reasoned. That is the trade you are making - speed and quality in exchange for your prompt leaving the machine.
 
 <br><br>
 
@@ -603,7 +628,11 @@ ollama launch --help
 ollama launch claude --model gpt-oss:120b-cloud
 ```
 
-   **Seeing it start is the point.** A real agent came up, wired to a model you pulled ten minutes ago, with no config file and no second account. Look at what it reports as its model, then exit with `/exit`. If you want to try one question, ask something small - *"what does api/chat_app.py do?"* - and keep it to one. An agent makes several round trips per question rather than the single request every other step today sends, so a long session is the one thing here that could eat into your free tier.
+   **On first launch Claude Code runs its own short setup** - pick a theme, press Enter past the security notes, skip the terminal-setup offer with ESC, then choose **"Yes, I trust this folder"**. None of that is an Anthropic login; it is the tool introducing itself. Then you land in the agent.
+
+![Claude Code running on an Ollama model](./images/ollama36.png?raw=true "Claude Code running on an Ollama model")
+
+   **Seeing it start is the point.** A real agent came up, wired to a model you pulled ten minutes ago, with no config file and no second account. The box on the left names the model it is driving - `gpt-oss:120b-cloud`. Look at that, then exit with `/exit`. If you want to try one question, ask something small - *"what does api/chat_app.py do?"* - and keep it to one. An agent makes several round trips per question rather than the single request every other step today sends, so a long session is the one thing here that could eat into your free tier.
 
    **If Ollama refuses the model, read the error - it is the lesson.** `ollama launch` checks whether a model is *agent-capable* before handing it to a coding tool, because driving an agent needs reliable tool calling, not just good prose. Try the small local model and watch it say so:
 
@@ -611,15 +640,19 @@ ollama launch claude --model gpt-oss:120b-cloud
 ollama launch claude --model llama3.2:3b
 ```
 
-   You get back something like *"llama3.2:3b does not work well with Claude Code. Try an agent-capable model like glm-5.2:cloud instead."* That one message is the clearest statement in this workshop of what a 3B model cannot do, and why Lab 4 exists. If the cloud model above is refused too, the error names alternatives - pull one with `ollama pull <name>` and rerun.
+   You get back something like *"llama3.2:3b does not work well with Claude Code. Try an agent-capable model like glm-5.2:cloud or gemma4:26b instead."* That one message is the clearest statement in this workshop of what a 3B model cannot do, and why Lab 4 exists. It is a **warning, not a hard refusal** - it offers you *Launch anyway* and *Pick another model*; press ESC to back out. If the cloud model above is refused too, the error names alternatives - pull one with `ollama pull <name>` and rerun.
+
+![The agent-capability gate](./images/ollama37.png?raw=true "The agent-capability gate")
 
 <br><br>
 
-10. (Optional) Try it against a different integration and a local model, to see that the same command covers both worlds.
+10. (Optional) The same command drives every integration in that list. Point it at Codex instead, with `--config` so it writes the configuration rather than starting anything.
 
 ```
 ollama launch codex --config --model llama3.2:3b
 ```
+
+   You will hit the same capability warning - the gate is about the *model*, not the tool - so choose **Launch anyway**, then answer **No** to "Launch Codex now?" (Codex itself is not installed here). The configuration is written either way. **One command, one flag, any of fifteen tools.**
 
 <br><br>
 

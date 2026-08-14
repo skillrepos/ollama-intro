@@ -66,7 +66,9 @@ if __name__ == "__main__":
     # Because we passed a schema, this parse should succeed every time.
     parsed = json.loads(raw)
     print("Parsed as a real Python object:")
-    print(f"  name           = {parsed.get('name')}")
-    print(f"  category       = {parsed.get('category')}")
-    print(f"  first_released = {parsed.get('first_released')}")
-    print(f"  used_for       = {', '.join(parsed.get('used_for', []))}")
+    # Driven off the parsed dict rather than a hard-coded field list, so that if
+    # you add a property to SCHEMA (Lab 5 step 4) it shows up here too.
+    for key, value in parsed.items():
+        if isinstance(value, list):
+            value = ", ".join(str(v) for v in value)
+        print(f"  {key:<14} = {value}")
