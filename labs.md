@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 5.0 - 08/13/26
+## Revision 5.1 - 08/17/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -26,7 +26,7 @@
 
 **Labs 1 - 4 are what we do together in the session.** Lab 5 is written to the same standard and is yours to work through afterward - it covers the two developer features the clock does not allow us to type through, plus the troubleshooting commands you'll want when you are working on your own.
 
-**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with a one-command step that gets you signed in early - **run it before you reach Lab 4** (in a live session, the break is the moment) and Lab 4 starts on the interesting part.
+**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with a one-command step that gets you signed in early - **run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.**
 
 Steps marked **(Optional)** inside a lab are there for people who finish early. Skip them if the room is moving on.
 
@@ -40,7 +40,7 @@ Steps marked **(Optional)** inside a lab are there for people who finish early. 
 
 **Lab 1 - Running your first local model**
 
-**Purpose: In this lab, we'll warm up the models, run one locally, and learn the interactive session commands. (approx. 10 minutes)**
+**Purpose: In this lab, we'll warm up the models, run one locally, and learn the interactive session commands.**
 
 1. Let's start by confirming Ollama is installed and which version we have. Go to the *TERMINAL* tab in the bottom part of your codespace and enter the command below.
 
@@ -87,7 +87,7 @@ python api/warmup.py
 
 <br><br>
 
-4. Let's run one. The command below starts an interactive session with the 3-billion-parameter Llama 3.2 model - our default for the workshop. Because we warmed it up in step 3, it should come back at the `>>>` prompt almost immediately.
+4. Let's run one. The command below starts an interactive session with the 3-billion-parameter Llama 3.2 model - our default for the workshop. 
 
 ```
 ollama run llama3.2:3b
@@ -95,7 +95,7 @@ ollama run llama3.2:3b
 
 <br><br>
 
-5. You should now be at a `>>>` prompt. Ask it something, wait for the answer, then ask a follow-up that only makes sense in context - this is a real chat session and it remembers what you just said.
+5. You should now be at a `>>>` prompt. Ask it something, wait for the answer, then ask a follow-up that only makes sense in context - this chat session remembers what you just said.
 
 ```
 In two sentences, what is the difference between a model and a checkpoint?
@@ -184,7 +184,7 @@ cat requirements.txt | ollama run llama3.2:3b "What is this dependency file for?
 
 <br><br>
 
-12. **Get signed in now, not in Lab 4.** Lab 4 uses a cloud-hosted model, which needs a free ollama.com account - creating one takes about a minute. Doing it here means Lab 4 starts on the interesting part instead of on a signup form. **In a live session, this is what the break is for.** Run the command below; it prints a URL. Open it, create a free account or sign in, and come back. (If you cannot create an account, skip this - Lab 4 is the only lab that needs one.)
+12. In the codespace terminal, use the command below to sign in to be ready for lab 4. The command should print a URL. Open it, create a free account or sign in, and come back. (If you cannot create an account, skip this - Lab 4 is the only lab that needs one.)
 
 ```
 ollama signin
@@ -199,7 +199,7 @@ ollama signin
 
 **Lab 2 - Choosing a model and customizing it**
 
-**Purpose: In this lab, we'll see what the numbers on a model actually mean, feel the size-versus-speed tradeoff first hand, then build our own customized model with a Modelfile. (approx. 12 minutes)**
+**Purpose: In this lab, we'll see what the numbers on a model actually mean, feel the size-versus-speed tradeoff first hand, then build our own customized model with a Modelfile.**
 
 1. In Lab 1 we saw model info from inside a session. The same thing is available from the shell. Run both commands below and compare the *Model* blocks - specifically *parameters*, *context length*, and *quantization*.
 
