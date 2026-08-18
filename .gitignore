@@ -14,3 +14,8 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# Slide decks - built and versioned outside the repo
+*.pptx
+*.potx
+~$*.pptx

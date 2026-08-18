@@ -2,9 +2,13 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.4 - 08/13/26**
+**Revision 4.5 - 08/18/26**
 
 These instructions will guide you through configuring a GitHub Codespaces environment that you can use to run the course labs.
+
+**Cannot use a Codespace?** See **[local-setup.md](./local-setup.md)** for running the labs on your own
+machine instead - installing Ollama on Windows, macOS, or Linux, cloning this repo, and the few
+codespace-specific commands in `labs.md` that need a local equivalent.
 
 <br/>
 
