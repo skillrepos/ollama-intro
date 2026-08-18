@@ -524,7 +524,7 @@ python api/simple_langchain.py "What is the capital of France?"
 
 **Purpose: In this lab, we'll run a model far too large for this machine with the same commands and code, then point a real coding tool at Ollama with `ollama launch`.**
 
-**Note: this lab needs a free ollama.com account. If you ran the signin step at the end of Lab 1 you are set; if not, step 1 handles it.**
+**Note: this lab needs a free ollama.com account. If you ran the signin step at the end of Lab 1 you can skip step 1; if not, step 1 handles it.**
 
 1. Ollama Cloud runs large models on Ollama's hardware, behind the API you have been using. If you signed in at the end of Lab 1 this says so; otherwise it prints a URL to create a free account.
 
@@ -536,7 +536,7 @@ ollama signin
 
 <br><br>
 
-2. Cloud models carry a `-cloud` tag, and pulling one downloads no weights at all.
+2. Let's pull a cloud model to get it in our list of available models. Cloud models carry a `-cloud` tag, and pulling one downloads no weights at all.
 
    **Cloud model names change frequently. If the name below is gone, open https://ollama.com/search?c=cloud and substitute any model whose tag ends in `-cloud`.**
 
@@ -556,7 +556,7 @@ ollama list
 
 <br><br>
 
-4. Now run it - a 120-billion-parameter model, impossible to fit in this codespace, and **the command is identical to every other `ollama run` you have typed today.**
+4. Now run it - a 120-billion-parameter model, impossible to fit in this codespace. Note the command is identical to every other `ollama run` you have typed today.
 
 ```
 ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins. Answer in under 120 words."
@@ -580,7 +580,7 @@ ollama ps
 
 <br><br>
 
-7. Now the important part: **your code does not change either.** The Lab 3 chat app reads its model from an environment variable - point it at the cloud model, then exit with CTRL-C.
+7. Now a key part: **your code does not change either.** The Lab 3 chat app reads its model from an environment variable. Use the single command below to point it at the cloud model.  Then you can query it and get the response from the same code referencing the larger, faster model. When done, exit with CTRL-C.
 
 ```
 OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
@@ -590,7 +590,7 @@ OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
 
 <br><br>
 
-8. `ollama launch` configures and starts real developer tools against your models - no environment variables, no config files. See what it supports.
+8. Here's one more cool and useful feature. `ollama launch` configures and starts real developer tools against your models - no environment variables, no config files. See what it supports.
 
 ```
 ollama launch --help
@@ -624,17 +624,7 @@ ollama launch claude --model llama3.2:3b
 
 <br><br>
 
-10. (Optional) The same command drives every integration in that list. Point it at Codex with `--config`, which writes configuration rather than starting anything.
-
-```
-ollama launch codex --config --model llama3.2:3b
-```
-
-   Choose **Launch anyway**, then **No** to "Launch Codex now?" - Codex is not installed here.
-
-<br><br>
-
-11. **On staying free:** the free tier covers light usage with limits that reset on a rolling window; everything else here runs locally at zero cost. Check usage at https://ollama.com/settings, or sign out now.
+10. (Optional) The free tier covers light usage with limits that reset on a rolling window; everything else here runs locally at zero cost. Check usage at https://ollama.com/settings.  You can also sign out if you want with the command below.
 
 ```
 ollama signout
