@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 6.5 - 08/18/26
+## Revision 6.6 - 08/18/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -646,7 +646,7 @@ ollama signout
 <br>
 
 <p align="center">
-<b>PART TWO - TAKE-HOME LABS</b>
+<b>PART TWO - TAKE-HOME LAB</b>
 </p>
 
 <p align="center">
@@ -657,7 +657,7 @@ ollama signout
 
 **Lab 5 - Structured output, OpenAI compatibility, and the troubleshooting toolkit**
 
-**Purpose: In this lab, we'll use structured output to get JSON you can rely on, run existing OpenAI code against Ollama unchanged, and finish with the handful of commands worth knowing when something breaks and no instructor is in the room.**
+**Purpose: In this lab, we'll use structured output to get JSON you can rely on, run existing OpenAI code against Ollama unchanged, and finish with the handful of commands worth knowing when something breaks.**
 
 **Nothing to warm up.** This codespace pins models in memory (`OLLAMA_KEEP_ALIVE=-1`), so they are loaded and ready whenever you come back to this lab.
 
@@ -666,6 +666,8 @@ ollama signout
 ```
 code api/structured_output.py
 ```
+
+![Schema and format](./images/ollama55.png?raw=true "Schema and format")
 
 <br><br>
 
@@ -689,7 +691,7 @@ python api/structured_output.py Fluxdash
 
 <br><br>
 
-4. (Optional) Open `api/structured_output.py` and add a new property to `SCHEMA` - for example `"maintained_by": {"type": "string"}` - then rerun and see the model fill it in.
+4. (Optional) Open `api/structured_output.py` and add a new property to `SCHEMA` - for example `"maintained_by": {"type": "string"}` - then rerun and see the model fill it in. (After you make the change, don't forget to save it with `CMD+S` or `CTRL+S`.)
 
 ```
 code api/structured_output.py
@@ -697,6 +699,8 @@ code api/structured_output.py
 ```
 python api/structured_output.py PostgreSQL
 ```
+
+![Updated schema](./images/ollama56.png?raw=true "Updated schema")
 
 <br><br>
 
@@ -715,6 +719,9 @@ curl -sS http://localhost:11434/v1/models | python3 -m json.tool
 ```
 code api/openai_compat.py
 ```
+
+![OpenAI Use](./images/ollama58.png?raw=true "OpenAI Use")
+
 ```
 python api/openai_compat.py
 ```
@@ -735,9 +742,11 @@ code api/cloud_chat.py
 python api/cloud_chat.py
 ```
 
+![Running cloud chat with key](./images/ollama59.png?raw=true "Running cloud chat with key")
+
 <br><br>
 
-8. Now the troubleshooting toolkit. The first two questions when something breaks: is the service even up, and if not, why?
+8. Finally, here's some troubleshooting tips. The first two questions that usually occur when something breaks: is the service even up, and if not, why?  Here's how to get the answers to those.
 
 ```
 curl -sS http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || echo "Ollama is NOT running"
@@ -745,6 +754,8 @@ curl -sS http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || e
 ```
 tail -30 /tmp/ollama.log
 ```
+
+![Running cloud chat with key](./images/ollama60.png?raw=true "Running cloud chat with key")
 
 <br><br>
 
