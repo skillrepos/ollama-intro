@@ -1,8 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 6.1 - 08/18/26
-### Prose-reduction pass: each step is now the action plus one line of why, with the longer explanation collected in a "What just happened" recap at the end of every lab.
+## Revision 6.2 - 08/18/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -10,7 +9,7 @@
 
 **NOTE: Unless a step says otherwise, run every command from the root of the repository. You can always get back there with `cd /workspaces/ollama-intro`.**
 
-**NOTE: This is a CPU-only codespace. Short answers from our default `llama3.2:3b` come back in about 4 - 6 seconds once the model is warm; long answers can take 30 seconds or more, because time scales with answer length. That is normal, not broken. Lab 1 step 3 warms the models up so you don't pay a load penalty on top of it.**
+**NOTE: This is a CPU-only codespace. Short answers from our default `llama3.2:3b` model will come back in about 4 - 6 seconds once the model is warm; long answers can take 30 seconds or more, because time scales with answer length. That is normal. Lab 1 step 3 warms the models up so you don't pay a load penalty on top of it.**
 
 <br><br>
 
@@ -25,9 +24,9 @@
 | | | | |
 | 5 - Structured output, OpenAI compatibility, and troubleshooting | 10 | 10 min | Take-home |
 
-**Labs 1 - 4 are what we do together in the session.** Lab 5 is written to the same standard and is yours to work through afterward - it covers the two developer features the clock does not allow us to type through, plus the troubleshooting commands you'll want when you are working on your own.
+**Labs 1 - 4 are in-class.** Lab 5 is optional if we have time or you can do it later. It covers two developer features we likely won't have time to try and troubleshooting commands you'll want when you are working on your own.
 
-**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with a one-command step that gets you signed in early - **run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.**
+**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with the step. **Just run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.**
 
 Steps marked **(Optional)** inside a lab are there for people who finish early. 
 
@@ -53,14 +52,20 @@ ollama --version
 
 <br><br>
 
-2. Let's see what is on disk, then add the 1B Llama 3.2 next to the 3B that ships in the image so Lab 2 can compare them.
+2. Look at what models are on the disk with the first command. 
 
 ```
 ollama list
 ```
+
+Now add a second model (the 1B Llama 3.2) next to the 3B one we already have.
+
 ```
 ollama pull llama3.2:1b
 ```
+
+Check to see that both are shown.
+
 ```
 ollama list
 ```
@@ -69,7 +74,7 @@ ollama list
 
 <br><br>
 
-3. Warm both models now, so that no later step pays the cost of reading weights off disk.
+3. Let's "warm up" both models now, so no later step pays the performance penalty of reading weights off disk.
 
 ```
 python api/warmup.py
@@ -102,7 +107,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-6. The `>>>` prompt has its own set of commands, all starting with a `/`. List them, then look at what this model actually is.
+6. The `>>>` prompt has its own set of commands, all starting with a `/`. Let's see them, then look at what this model actually is.
 
 ```
 /?
@@ -115,7 +120,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. **`num_predict`** is a hard cap on how many tokens an answer may run to. Set it very low and ask a question that would normally get a long answer.
+7. Let's look at **`num_predict`**. That one is a hard cap on how many tokens an answer may run to. Set it very low and ask a question that would normally get a long answer.
 
 ```
 /set parameter num_predict 20
@@ -148,7 +153,7 @@ Explain what a container image is.
 
 <br><br>
 
-9. Leaving the session did **not** unload the model - this shows what is still in memory, and when it will be released.
+9. Leaving the session did **not** unload the model - running the `ps` command shows what is still in memory, and when it will be released. Run the command.
 
 ```
 ollama ps
