@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 6.2 - 08/18/26
+## Revision 6.3 - 08/18/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -258,15 +258,19 @@ code modelfiles/Modelfile.shellcoach
 
 <br><br>
 
-5. Fill in the gaps by merging in the completed version.
+5. Fill in the gaps by merging in the completed version by running the command below.
 
 ```
 code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
 
-   You'll get a side-by-side view with **three change blocks**, one per labeled section. Merge each with the arrow pointing right in the middle bar, then **save the file** (CTRL-S / CMD-S on a Mac).
-
+   You'll get a side-by-side view with **three change blocks**, one per labeled section. The left side is the complete code. The right side is the starter code. We will build out the starter code by merging in the changes from the left. Review the code in red on the left, then, when ready, hover over the middle bar (between the views) and click on the arrow that shows up to do the merge. Also, if you see a yellow bubble in the left "gutter", that means if you hover over the code change, you'll get a pop-up further explaining the change. 
+   
 ![Merging the completed Modelfile](./images/ollama50.png?raw=true "Merging the completed Modelfile")
+
+When done merging, click on the X at the top to close **and** save the merged version.
+
+![Merging the completed Modelfile](./images/ollama54.png?raw=true "Merging the completed Modelfile")
 
 <br><br>
 
