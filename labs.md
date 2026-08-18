@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs - two-hour workshop
 ## Session labs
-## Revision 6.3 - 08/18/26
+## Revision 6.5 - 08/18/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -366,7 +366,7 @@ ollama run shellcoach "How do I delete every .tmp file under /var/log?"
 
 **Purpose: In this lab, we'll work through the three developer-facing ways into Ollama - the raw HTTP API with curl, the official Python library, and a framework - and see that all three hit the same endpoint.**
 
-1. Everything so far went through a local HTTP service on port 11434. The first command returns `Ollama is running`; the second gives you `ollama list` as JSON your code could consume.
+1. Everything so far went through a local HTTP service on port 11434. Run some commands to see output from accessing that service. The first command returns `Ollama is running`; the second gives you `ollama list` as JSON your code could consume. (NOTE: Output may be at the beginning of a line.)
 
 ```
 curl http://localhost:11434
@@ -380,7 +380,7 @@ curl -sS http://localhost:11434/api/tags | python3 -m json.tool
 <br><br>
 
 
-2. `/api/generate` is the single-turn endpoint - one prompt in, one completion out, with `"stream": false` asking for one complete JSON object rather than a stream of fragments.
+2. `/api/generate` is the single-turn endpoint - one prompt in, one completion out, with `"stream": false` asking for one complete JSON object rather than a stream of fragments. Use the `curl` command below to call the API with the prompt `In two sentences, what is a REST API?`.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -397,7 +397,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-3. Now the same request with streaming left on, which is the default.
+3. Now issue the same request with streaming left on, which is the default. Note the difference from the last run.
 
 ```
 curl -sS http://localhost:11434/api/generate -d '{
@@ -411,7 +411,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-4. `/api/generate` has no memory. `/api/chat` takes a *messages* array instead - let's ask the **same question twice**, once cold and once with a conversation in front of it.
+4. The `/api/generate` endpoint we were using has no memory. Another endpoint, `/api/chat`, takes a *messages* array instead which serves as "memory". Let's ask the **same question twice**, once cold and once with a conversation in front of it.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -425,7 +425,7 @@ curl -sS http://localhost:11434/api/chat -d '{
 }' | python3 -m json.tool
 ```
 
-   It cannot answer - notice it asks for the details rather than guessing. Now put those details in the array, writing the `assistant` turn ourselves.
+   It cannot answer because it doesn't have access to the information. Let's pretend though that we had already gotten an answer from the model (the `assistant`) and put those details in the array, writing the `assistant` turn ourselves. This simulates building up a set of messages (the `memory`) over time.
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
@@ -451,25 +451,23 @@ curl -sS http://localhost:11434/api/chat -d '{
 
 <br><br>
 
-6. The official Python library is a thin, typed wrapper over those same endpoints. Open the chat application we've provided - click [**api/chat_app.py**](./api/chat_app.py) or use the command below - and find the two `TODO` markers.
+6. The official Python library is a thin, typed wrapper over those same endpoints. Let's build an example. Open the starter code for a chat application we've provided - click [**api/chat_app.py**](./api/chat_app.py) or use the command below - and find the two `TODO` markers.
 
 ```
 code api/chat_app.py
 ```
 
-   **Note: this file is incomplete - it will raise a `NotImplementedError` if you run it now.**
 
 ![The skeleton chat application](./images/ollama26.png?raw=true "The skeleton chat application")
 
 <br><br>
 
-7. As before, merge in the completed code.
-
+7. As before, we'll build out the code with the "diff and merge" approach. Run the command below.,
 ```
 code -d extra/chat_app-complete.txt api/chat_app.py
 ```
 
-   You'll get a side-by-side view with **three sections**. Merge each with the arrow pointing right in the middle bar, then **save the file** (CTRL-S / CMD-S on a Mac).
+   Review and merge in the completed code, then close and save your changes by clicking on the `X` in the tab at the top of the diff view.
 
 ![Merging the completed chat application](./images/ollama27.png?raw=true "Merging the completed chat application")
 
@@ -496,7 +494,7 @@ How would I work around that?
 <br><br>
 
 
-10. Finally, the layer most developers actually reach for: a framework. `langchain-ollama` is already installed - open the example and run it.
+10. (Optional if time allows.) This code shows using an external framework `langchain-ollama` to do the same example. Open and review the code and then run it.
 
 ```
 code api/simple_langchain.py
