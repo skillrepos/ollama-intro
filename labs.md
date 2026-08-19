@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.7 - 08/18/26
+## Revision 6.8 - 08/18/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -364,7 +364,7 @@ ollama run shellcoach "How do I delete every .tmp file under /var/log?"
 
 **Lab 3 - Using Ollama from an application**
 
-**Purpose: In this lab, we'll work through the three developer-facing ways into Ollama - the raw HTTP API with curl, the official Python library, and a framework - and see that all three hit the same endpoint.**
+**Purpose: In this lab, we'll work through the three developer-facing ways into Ollama - the raw HTTP API with curl, the official Python library, and a framework.**
 
 1. Everything so far went through a local HTTP service on port 11434. Run some commands to see output from accessing that service. The first command returns `Ollama is running`; the second gives you `ollama list` as JSON your code could consume. (NOTE: Output may be at the beginning of a line.)
 
