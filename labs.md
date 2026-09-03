@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.8 - 08/18/26
+## Revision 6.9 - 09/02/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -340,9 +340,19 @@ ollama run shellcoach "How do I delete every .tmp file under /var/log?"
 ```
 code modelfiles/Modelfile.shellcoach
 ```
+
+Make the edit change for `PARAMETER temperature`.
+
+![Changing temp](./images/ollama61.png?raw=true "Changing temp")
+
+Save the file with the changes (CMD+S / Ctrl+S). Then run the commands to build the updated model.
+
 ```
 ollama create shellcoach -f modelfiles/Modelfile.shellcoach
 ```
+
+Now repeat a prompt like the one below three times and notice how the answers vary with the higher temperature value in place.
+
 ```
 ollama run shellcoach "How do I delete every .tmp file under /var/log?"
 ```
