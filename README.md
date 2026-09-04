@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.6 - 09/04/26**
+**Revision 4.7 - 09/04/26**
 
 <br/>
 
@@ -13,7 +13,7 @@ Pick one. Everything in `labs.md` works either way.
 | | | Best when |
 | :-- | :-- | :-- |
 | **Option A - GitHub Codespace** | Nothing to install. Ollama, Python, the packages and the default model are already in the image. | The default. Use this unless you cannot. |
-| **Option B - Your own machine** | Install Ollama, Python and VS Code yourself. Windows, macOS or Linux. | No GitHub account, Codespaces blocked by policy, an offline room, or you just prefer local. |
+| **Option B - Your own machine** | Install Ollama, Git and Python, and use your own editor. Windows, macOS or Linux. | No GitHub account, Codespaces blocked by policy, an offline room, or you just prefer local. |
 
 **Option A is covered below.** For **Option B**, follow **[local-setup.md](./local-setup.md)** - it walks
 through the installs per platform and lists the handful of codespace-specific commands in `labs.md` that
@@ -83,27 +83,43 @@ You can either open it in a separate browser instance or open it in the codespac
 
 ## Option B - Setup on your own machine
 
-Full instructions, per platform, are in **[local-setup.md](./local-setup.md)**. What you will be installing:
+**Install four things, then run six commands.** Per-platform detail and troubleshooting live in
+**[local-setup.md](./local-setup.md)** - you should not need to read it unless something goes wrong.
 
-| What | Why | Where |
-| :-- | :-- | :-- |
-| **Ollama 0.15 or later** | The whole workshop. 0.15 is the minimum for `ollama launch` in Lab 4. | https://ollama.com/download - [Windows](https://ollama.com/download/windows) · [macOS](https://ollama.com/download/mac) · Linux: `curl -fsSL https://ollama.com/install.sh \| sh` |
-| **Git** | Cloning this repo. | https://git-scm.com/downloads - on Windows this also gives you **Git Bash**, which you want |
-| **Python 3.10+** | The `python api/...` programs in Labs 1, 3 and 5. Create a venv and `pip install -r requirements.txt` (ollama, requests, langchain-ollama, openai). | https://www.python.org/downloads/ - tick *Add python.exe to PATH* on Windows |
-| **VS Code, with the `code` command on PATH** | The `code -d` diff-and-merge steps in Labs 2 and 3. | https://code.visualstudio.com/download |
-| **The `llama3.2:3b` model** | The default model for every lab. The codespace image has it; your machine does not. | `ollama pull llama3.2:3b` (about 2 GB) |
-| **Node.js 18+ and Claude Code** *(optional)* | Only Lab 4 step 9, `ollama launch claude`. Everything else works without it. | `npm install -g @anthropic-ai/claude-code` |
+| Install | Where |
+| :-- | :-- |
+| **Ollama 0.15 or later** - 0.15 is the minimum for Lab 4's `ollama launch` | https://ollama.com/download |
+| **Git** - on Windows this also installs **Git Bash**, which you want | https://git-scm.com/downloads |
+| **Python 3.10 or later** - tick *Add python.exe to PATH* on Windows | https://www.python.org/downloads/ |
+| **Any editor you already like** - you need one that can show two files side by side for the two merge steps. VS Code is what the labs show; anything with a compare view works | https://code.visualstudio.com/download |
 
-**There is a shortcut.** If you already run Docker Desktop, install the VS Code *Dev Containers* extension,
-clone this repo, open the folder and choose **Reopen in Container**. You get the same image the codespace
-uses, with nothing on this list to install. See local-setup.md.
+Then, in a terminal (**Git Bash** on Windows):
 
-**Rough requirements:** about 6 GB of free disk for Ollama plus the two workshop models, and 8 GB of RAM.
-**No GPU is needed** - the labs are written for CPU-only machines, which is exactly what a codespace is. A
-GPU just makes everything faster.
+```
+git clone https://github.com/skillrepos/ollama-intro.git
+cd ollama-intro
+python3 -m venv py_env
+source py_env/bin/activate
+pip install -r requirements.txt
+ollama pull llama3.2:3b
+```
 
-**On Windows, run the lab commands in Git Bash or WSL, not PowerShell or cmd.** The labs use `time`, pipes,
-and single-quoted JSON on `curl`, all of which behave differently in PowerShell.
+*(Windows PowerShell users: `py_env\Scripts\activate` instead of the `source` line.)*
+
+**That is the whole setup.** To confirm it worked, `ollama list` should show `llama3.2:3b` and
+`curl http://localhost:11434` should answer `Ollama is running`. Then start at Lab 1.
+
+Three things worth knowing before you begin:
+
+- **On Windows, run the lab commands in Git Bash or WSL** - not PowerShell or cmd. The labs use `time`,
+  pipes, and single-quoted JSON on `curl`, all of which behave differently there.
+- **Lab 4 step 9 also wants Claude Code** - `npm install -g @anthropic-ai/claude-code`, which needs
+  Node 18+. Every other step works without it.
+- **Already running Docker Desktop?** Install the VS Code *Dev Containers* extension, open this repo and
+  choose **Reopen in Container**. You get the codespace image with none of the above to install.
+
+**Requirements:** about 6 GB of free disk and 8 GB of RAM. **No GPU needed** - the labs are written for
+CPU-only machines, which is exactly what a codespace is. A GPU just makes everything faster.
 
 <br/>
 

@@ -1,6 +1,6 @@
 # Running the labs without a Codespace
 
-**Revision 1.1 - 09/04/26**
+**Revision 1.2 - 09/04/26**
 
 The workshop is built around GitHub Codespaces, and `README.md` covers that path. Use
 this file instead if you cannot use a codespace - no GitHub account, a blocked network,
@@ -16,12 +16,36 @@ work straight through it once the setup here is done.
 
 <br/>
 
+## The short version
+
+Install **Ollama 0.15+**, **Git**, **Python 3.10+**, and use whatever **editor** you already have. Then:
+
+```
+git clone https://github.com/skillrepos/ollama-intro.git
+cd ollama-intro
+python3 -m venv py_env
+source py_env/bin/activate
+pip install -r requirements.txt
+ollama pull llama3.2:3b
+```
+
+*(Windows PowerShell: `py_env\Scripts\activate` instead of the `source` line. But use Git Bash for the
+labs themselves - see below.)*
+
+Check it: `ollama list` shows `llama3.2:3b`, and `curl http://localhost:11434` answers `Ollama is running`.
+If both pass, **skip to [Codespace commands and their local equivalents](#codespace-commands-and-their-local-equivalents)**
+- that short table is the only part of this file you actually need while running the labs.
+
+The numbered sections below are reference: read the one that matches whatever gave you trouble.
+
+<br/>
+
 ## Two ways to run locally
 
 | | What you need | Best when |
 | :-- | :-- | :-- |
 | **A. Dev Container** | Docker Desktop + VS Code + *Dev Containers* extension | You want the exact codespace environment with nothing to configure |
-| **B. Native install** | Ollama, Git, Python, VS Code | You do not want Docker, or Docker is blocked too |
+| **B. Native install** | Ollama, Git, Python, an editor | You do not want Docker, or Docker is blocked too |
 
 **Option A is far less work.** Install Docker Desktop and the VS Code *Dev Containers*
 extension, clone the repo (step 2 below), open the folder in VS Code, and choose
@@ -178,22 +202,40 @@ ollama list
 
 <br/>
 
-## 5. Install VS Code and the `code` command
+## 5. An editor for the merge steps
 
-Labs 2 and 3 use `code -d <complete> <skeleton>` to open a side-by-side diff you merge
-from. That needs VS Code with its command line on your PATH.
+**You do not need VS Code.** Any editor works. The labs ask an editor to do two things:
 
-Install VS Code from https://code.visualstudio.com/download.
+- **`code <file>`** - steps that just open a file to read or edit. Open it however you normally would.
+- **`code -d <complete> <skeleton>`** - Labs 2 and 3 show a side-by-side diff and have you merge the left
+  side into the right. Any compare view does this: VS Code, IntelliJ / PyCharm, Sublime Merge, BBEdit,
+  Meld, `vimdiff`, `kdiff3`.
+
+If your editor has no compare view, open both files and copy the blocks that are in the complete file but
+not in the skeleton. That is the same exercise - the point is reading each block before you take it, not
+the tool. There are only two pairs in the whole workshop:
+
+| Lab | Complete file | Skeleton you edit |
+| :-- | :-- | :-- |
+| 2 step 5 | `extra/Modelfile-shellcoach-complete.txt` | `modelfiles/Modelfile.shellcoach` |
+| 3 step 7 | `extra/chat_app-complete.txt` | `api/chat_app.py` |
+
+A terminal `diff` shows you exactly what to move:
+
+```
+diff -u modelfiles/Modelfile.shellcoach extra/Modelfile-shellcoach-complete.txt
+```
+
+**If you do use VS Code**, install it from https://code.visualstudio.com/download and make sure the `code`
+command is on your PATH, so the lab commands work exactly as printed:
 
 - **Windows** - the installer adds `code` to PATH automatically.
 - **Linux** - the `.deb` / `.rpm` packages add it automatically.
 - **macOS** - open VS Code, press `CMD+SHIFT+P`, and run
   **Shell Command: Install 'code' command in PATH**.
 
-Check it with `code --version`. If the `code -d` steps open nothing, this is why.
-
-Optionally, install the **Merge Info** extension bundled at
-`.devcontainer/merge-info-0.1.0.vsix` for hover explanations on each merge block:
+Optionally install the **Merge Info** extension bundled at `.devcontainer/merge-info-0.1.0.vsix` for hover
+explanations on each merge block. It is a VS Code-only nicety - the merges work fine without it.
 
 ```
 code --install-extension .devcontainer/merge-info-0.1.0.vsix
@@ -274,7 +316,7 @@ warmup reporting the model loaded. If all four pass, start at Lab 1 step 1.
 | `ollama: command not found` | Close and reopen the terminal so it picks up the new PATH. On Linux, confirm with `which ollama` |
 | `curl: (7) Failed to connect to localhost port 11434` | The server is not running. Windows/macOS: launch the Ollama app. Linux: `sudo systemctl start ollama` or `ollama serve` |
 | `Error: model 'llama3.2:3b' not found` | You skipped step 4 above. Run `ollama pull llama3.2:3b` |
-| `code -d` opens nothing | The `code` command is not on PATH - see step 5. On macOS run **Shell Command: Install 'code' command in PATH** |
+| `code -d` opens nothing | Using VS Code? The `code` command is not on PATH - see step 5. Not using VS Code? Use your editor's compare view, or `diff -u` - step 5 lists the two file pairs |
 | `ModuleNotFoundError: No module named 'ollama'` | The virtual environment is not active. Re-run the activate command for your platform |
 | `time: command not found` (Lab 2 step 2) | You are in PowerShell or cmd. Use Git Bash or WSL |
 | Multi-line `curl` in Lab 3 errors out | Same cause - PowerShell parses the single-quoted JSON differently. Use Git Bash or WSL |

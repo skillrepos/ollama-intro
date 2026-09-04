@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.10 - 09/04/26
+## Revision 6.11 - 09/04/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -17,14 +17,15 @@
 
 **You do not need a codespace.** Every `ollama` command, every `curl`, and every `python api/...` program
 in this file runs unchanged on Windows, macOS or Linux. Work through
-**[local-setup.md](./local-setup.md)** first - it installs Ollama, Python and VS Code's `code` command, and
-pulls the default `llama3.2:3b` model that the codespace image ships with preinstalled.
+**[local-setup.md](./local-setup.md)** first - it is four installs and six commands: Ollama, Git, Python, your
+own editor, and a pull of the default `llama3.2:3b` model that the codespace image ships with preinstalled.
 
 After that, the steps below marked **Running locally:** are the only places your experience differs:
 
 | | In the codespace | On your own machine |
 | :-- | :-- | :-- |
 | Repo location | `/workspaces/ollama-intro` | wherever you cloned it |
+| Opening and merging files | `code` and `code -d`, in the codespace's VS Code | any editor you like - `code -d` steps just need a side-by-side compare view |
 | Default model `llama3.2:3b` | already there | you pull it once, yourself |
 | Start / stop Ollama | `scripts/startOllama.sh` and `scripts/shutdown_ollama.sh` | the Ollama app, or `systemctl` on Linux |
 | Server log | `/tmp/ollama.log` | a per-OS path - see local-setup.md |
@@ -297,8 +298,11 @@ code modelfiles/Modelfile.shellcoach
 code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
 
-   **Running locally:** `code -d` needs VS Code's `code` command on your PATH - see local-setup.md step 5.
-   If nothing opens, that is why. This applies to the merge step in Lab 3 as well.
+   **Running locally:** you do not need VS Code. `code -d` opens a side-by-side compare - use your own
+   editor's equivalent (IntelliJ, Sublime Merge, BBEdit, Meld, `vimdiff`), or simply open both files and
+   copy across the blocks that are in the complete file but not the skeleton. `diff -u` in a terminal shows
+   you which those are. Same for the merge step in Lab 3. (Using VS Code? Its `code` command has to be on
+   your PATH - local-setup.md step 5.)
 
    You'll get a side-by-side view with **three change blocks**, one per labeled section. The left side is the complete code. The right side is the starter code. We will build out the starter code by merging in the changes from the left. Review the code in red on the left, then, when ready, hover over the middle bar (between the views) and click on the arrow that shows up to do the merge. Also, if you see a yellow bubble in the left "gutter", that means if you hover over the code change, you'll get a pop-up further explaining the change. 
    
