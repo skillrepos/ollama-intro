@@ -1,6 +1,6 @@
 # Running the labs without a Codespace
 
-**Revision 1.0 - 08/18/26**
+**Revision 1.1 - 09/04/26**
 
 The workshop is built around GitHub Codespaces, and `README.md` covers that path. Use
 this file instead if you cannot use a codespace - no GitHub account, a blocked network,
@@ -9,6 +9,10 @@ an org policy against Codespaces, or you simply prefer your own machine.
 Everything in `labs.md` works locally. What changes is that a few commands written for
 the codespace need a local equivalent, and you have to install things the course image
 provides for you. Both are covered below.
+
+`labs.md` also carries a **Running these labs on your own machine** section near the top and
+a **Running locally:** note at each individual step where your experience differs - so you can
+work straight through it once the setup here is done.
 
 <br/>
 
@@ -200,14 +204,20 @@ code --install-extension .devcontainer/merge-info-0.1.0.vsix
 ## 6. Optional - Claude Code, for Lab 4 step 9
 
 Lab 4 step 9 runs `ollama launch claude`, which starts Claude Code against an Ollama
-model. The codespace image preinstalls it; locally you need Node.js 18+ and:
+model. The codespace image preinstalls it. On your own machine, install it yourself with
+Node.js 18+:
 
 ```
 npm install -g @anthropic-ai/claude-code
 ```
 
+Recent Ollama versions may offer to set the tool up for you when it is missing, but having it
+already installed matches what the codespace does and takes the uncertainty out of a live step.
+
 Skip this and `ollama launch --help` in step 8 still works - you just cannot complete
-step 9. No Anthropic account or API key is needed either way.
+step 9. **No Anthropic account or API key is needed either way** - `ollama launch` points Claude
+Code at your local server. `ollama launch` needs **Ollama 0.15 or later** and currently drives
+Claude Code, OpenCode, Codex, VS Code and Droid.
 
 <br/>
 

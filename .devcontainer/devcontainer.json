@@ -3,7 +3,11 @@
 
     // Prebuilt image - see .devcontainer/Dockerfile and IMAGEMAINTENANCE.md.
     // Everything slow (OS packages, Node, Claude Code, the Python venv, the
-    // Ollama binary, and BOTH workshop models) is already inside it.
+    // Ollama binary, and the default llama3.2:3b model) is already inside it.
+    //
+    // Only the 3B is baked in. llama3.2:1b is NOT - students pull it themselves
+    // in Lab 1 step 2, which is the point of that step. scripts/postattach.sh
+    // runs api/warmup.py on attach; it reports the 1B as SKIPPED until then.
     //
     // For a fork, or if the GHCR image is ever unavailable, comment out "image"
     // and uncomment "build" below. "context": ".." is required because the

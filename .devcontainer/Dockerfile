@@ -61,10 +61,12 @@ RUN curl -fsSL https://ollama.com/install.sh | sh && \
            /usr/local/lib/ollama/vulkan
 
 # ---------------------------------------------------------------------------
-# 6. The workshop models, baked in
-#    This is the single biggest saving: ~3.3 GB that every student currently
-#    downloads at creation time. `ollama pull` needs a running server, so the
-#    server is started and stopped inside this one layer.
+# 6. The default workshop model, baked in
+#    This is the single biggest saving: the ~2 GB llama3.2:3b download that
+#    every student would otherwise pay at creation time. Only the 3B is baked
+#    in - llama3.2:1b is pulled by the student in Lab 1 step 2 on purpose.
+#    `ollama pull` needs a running server, so the server is started and stopped
+#    inside this one layer.
 #
 #    OLLAMA_MODELS points the store at /opt so it survives as an image layer -
 #    the default ~/.ollama would land in the user's home.

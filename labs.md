@@ -1,15 +1,39 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.9 - 09/02/26
+## Revision 6.10 - 09/04/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
 **NOTE: To copy and paste in the codespace, you may need to use keyboard commands - CTRL-C and CTRL-V. Chrome may work best for this.**
 
-**NOTE: Unless a step says otherwise, run every command from the root of the repository. You can always get back there with `cd /workspaces/ollama-intro`.**
+**NOTE: Unless a step says otherwise, run every command from the root of the repository. You can always get back there with `cd /workspaces/ollama-intro`.** **Running locally:** that is the folder you cloned the repo into.
 
 **NOTE: This is a CPU-only codespace. Short answers from our default `llama3.2:3b` model will come back in about 4 - 6 seconds once the model is warm; long answers can take 30 seconds or more, because time scales with answer length. That is normal. Lab 1 step 3 warms the models up so you don't pay a load penalty on top of it.**
+
+<br>
+
+### Running these labs on your own machine
+
+**You do not need a codespace.** Every `ollama` command, every `curl`, and every `python api/...` program
+in this file runs unchanged on Windows, macOS or Linux. Work through
+**[local-setup.md](./local-setup.md)** first - it installs Ollama, Python and VS Code's `code` command, and
+pulls the default `llama3.2:3b` model that the codespace image ships with preinstalled.
+
+After that, the steps below marked **Running locally:** are the only places your experience differs:
+
+| | In the codespace | On your own machine |
+| :-- | :-- | :-- |
+| Repo location | `/workspaces/ollama-intro` | wherever you cloned it |
+| Default model `llama3.2:3b` | already there | you pull it once, yourself |
+| Start / stop Ollama | `scripts/startOllama.sh` and `scripts/shutdown_ollama.sh` | the Ollama app, or `systemctl` on Linux |
+| Server log | `/tmp/ollama.log` | a per-OS path - see local-setup.md |
+| Models staying loaded | pinned with `OLLAMA_KEEP_ALIVE=-1` | unloaded after 5 idle minutes by default |
+| Claude Code (Lab 4 step 9) | preinstalled | install it first, or let `ollama launch` offer to |
+| Speed | CPU-only: 4 - 6 s for a short answer | your hardware - a GPU is dramatically faster |
+
+**On Windows, run the lab commands in Git Bash or WSL, not PowerShell or cmd.** The `time` command, the
+pipes, and the single-quoted JSON in the `curl` steps all behave differently in PowerShell.
 
 <br><br>
 
@@ -26,7 +50,7 @@
 
 **Labs 1 - 4 are in-class.** Lab 5 is optional if we have time or you can do it later. It covers two developer features we likely won't have time to try and troubleshooting commands you'll want when you are working on your own.
 
-**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with the step. **Just run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.**
+**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with the step. **Just run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.** **Running locally:** any terminal will do.
 
 Steps marked **(Optional)** inside a lab are there for people who finish early. 
 
@@ -60,6 +84,9 @@ ollama list
 
 Now add a second model (the 1B Llama 3.2) next to the 3B one we already have.
 
+   **Running locally:** you only have the 3B if you pulled it during setup. If `ollama list` comes back
+   empty, run `ollama pull llama3.2:3b` before going on - step 3 fails without it.
+
 ```
 ollama pull llama3.2:1b
 ```
@@ -83,6 +110,9 @@ python api/warmup.py
 ![Warming up the models](./images/ollama6.png?raw=true "Warming up the models")
 
    **If that command reports it could not reach Ollama**, the background service is not running. Start it with `bash scripts/startOllama.sh` and try again.
+
+   **Running locally:** that script is codespace-only. Start the Ollama app from your system tray or menu
+   bar instead (Linux: `sudo systemctl start ollama`, or `ollama serve` in its own terminal).
 
 <br><br>
 
@@ -181,7 +211,7 @@ cat requirements.txt | ollama run llama3.2:3b "What is this dependency file for?
 
 <br><br>
 
-12. From the codespace terminal, sign in so you are ready for Lab 4. The command prints a URL - open it, create a free account or sign in, and come back. (Skip this if you cannot create an account; Lab 4 is the only lab that needs one.)
+12. From the codespace terminal - or any terminal, if you are running locally - sign in so you are ready for Lab 4. The command prints a URL - open it, create a free account or sign in, and come back. (Skip this if you cannot create an account; Lab 4 is the only lab that needs one.)
 
 ```
 ollama signin
@@ -223,6 +253,9 @@ ollama show llama3.2:1b
 
 2. Now let's feel that difference. Both models are warm, so you're timing generation - run the small one first and compare the `real` times.
 
+   **Running locally:** `time` is a shell builtin that PowerShell and cmd do not have. Use Git Bash or WSL
+   on Windows. Your absolute numbers will differ from the ones quoted below; the *ratio* is the point.
+
 ```
 time ollama run llama3.2:1b "What is a vector embedding? One sentence."
 ```
@@ -263,6 +296,9 @@ code modelfiles/Modelfile.shellcoach
 ```
 code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
+
+   **Running locally:** `code -d` needs VS Code's `code` command on your PATH - see local-setup.md step 5.
+   If nothing opens, that is why. This applies to the merge step in Lab 3 as well.
 
    You'll get a side-by-side view with **three change blocks**, one per labeled section. The left side is the complete code. The right side is the starter code. We will build out the starter code by merging in the changes from the left. Review the code in red on the left, then, when ready, hover over the middle bar (between the views) and click on the arrow that shows up to do the merge. Also, if you see a yellow bubble in the left "gutter", that means if you hover over the code change, you'll get a pop-up further explaining the change. 
    
@@ -612,6 +648,10 @@ ollama launch --help
 
 9. Now actually launch one. **Claude Code is already installed here**, so a real coding agent starts - no Anthropic account, no API key.
 
+   **Running locally:** Claude Code is not preinstalled on your machine. Either install it first
+   (`npm install -g @anthropic-ai/claude-code`, needs Node 18+ - local-setup.md step 6) or accept
+   `ollama launch`'s offer to set it up. Either way, no Anthropic account or API key is involved.
+
 ```
 ollama launch claude --model gpt-oss:120b-cloud
 ```
@@ -670,6 +710,10 @@ ollama signout
 **Purpose: In this lab, we'll use structured output to get JSON you can rely on, run existing OpenAI code against Ollama unchanged, and finish with the handful of commands worth knowing when something breaks.**
 
 **Nothing to warm up.** This codespace pins models in memory (`OLLAMA_KEEP_ALIVE=-1`), so they are loaded and ready whenever you come back to this lab.
+
+**Running locally:** models unload after 5 idle minutes by default, so your first prompt here will be slow.
+Run `python api/warmup.py` first, or pin them the way the codespace does - local-setup.md shows how to set
+`OLLAMA_KEEP_ALIVE=-1` for the server on each platform.
 
 1. **Structured output** hands Ollama a JSON Schema in the `format` field and the reply is constrained to match. Open the script and look at the `SCHEMA` object.
 
@@ -765,11 +809,18 @@ curl -sS http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || e
 tail -30 /tmp/ollama.log
 ```
 
+   **Running locally:** `/tmp/ollama.log` is where the codespace's start script sends output. On your own
+   machine the log lives elsewhere - macOS: `~/.ollama/logs/server.log`; Linux: `journalctl -e -u ollama`;
+   Windows: `%LOCALAPPDATA%\Ollama\server.log`.
+
 ![Running cloud chat with key](./images/ollama60.png?raw=true "Running cloud chat with key")
 
 <br><br>
 
 9. If you ever get `address already in use` on port 11434, there's a stale server - stop everything, then start it cleanly.
+
+   **Running locally:** both scripts are codespace-only. Quit Ollama from the tray or menu bar and relaunch
+   it (Linux: `sudo systemctl stop ollama` then `sudo systemctl start ollama`).
 
 ```
 bash scripts/shutdown_ollama.sh
