@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.13 - 09/04/26
+## Revision 6.14 - 09/04/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -623,6 +623,10 @@ ollama ps
 
 ```
 OLLAMA_MODEL=gpt-oss:120b-cloud python api/chat_app.py
+```
+
+```
+In two sentences, what is a race condition?
 ```
 
 ![The same app against a cloud model](./images/ollama34.png?raw=true "The same app against a cloud model")
