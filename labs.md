@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.11 - 09/04/26
+## Revision 6.13 - 09/04/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -16,9 +16,9 @@
 ### Running these labs on your own machine
 
 **You do not need a codespace.** Every `ollama` command, every `curl`, and every `python api/...` program
-in this file runs unchanged on Windows, macOS or Linux. Work through
-**[local-setup.md](./local-setup.md)** first - it is four installs and six commands: Ollama, Git, Python, your
-own editor, and a pull of the default `llama3.2:3b` model that the codespace image ships with preinstalled.
+in this file runs unchanged on Windows, macOS or Linux. Do the setup in **[README.md](./README.md) -
+Option B** first: four installs and six commands. **[local-setup.md](./local-setup.md)** has the
+per-platform detail and troubleshooting if you need it.
 
 After that, the steps below marked **Running locally:** are the only places your experience differs:
 
@@ -37,17 +37,6 @@ After that, the steps below marked **Running locally:** are the only places your
 pipes, and the single-quoted JSON in the `curl` steps all behave differently in PowerShell.
 
 <br><br>
-
-**Lab guide**
-
-| Lab | Steps | Time | When |
-| :-- | :-- | :-- | :-- |
-| 1 - Running your first local model | 12 | 10 min | In class |
-| 2 - Choosing a model and customizing it | 12 | 12 min | In class |
-| 3 - Using Ollama from an application | 10 | 12 min | In class |
-| 4 - Cloud models and wiring up your tools | 11 | 9 min | In class |
-| | | | |
-| 5 - Structured output, OpenAI compatibility, and troubleshooting | 10 | 10 min | Take-home |
 
 **Labs 1 - 4 are in-class.** Lab 5 is optional if we have time or you can do it later. It covers two developer features we likely won't have time to try and troubleshooting commands you'll want when you are working on your own.
 
@@ -302,7 +291,7 @@ code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
    editor's equivalent (IntelliJ, Sublime Merge, BBEdit, Meld, `vimdiff`), or simply open both files and
    copy across the blocks that are in the complete file but not the skeleton. `diff -u` in a terminal shows
    you which those are. Same for the merge step in Lab 3. (Using VS Code? Its `code` command has to be on
-   your PATH - local-setup.md step 5.)
+   your PATH - see local-setup.md.)
 
    You'll get a side-by-side view with **three change blocks**, one per labeled section. The left side is the complete code. The right side is the starter code. We will build out the starter code by merging in the changes from the left. Review the code in red on the left, then, when ready, hover over the middle bar (between the views) and click on the arrow that shows up to do the merge. Also, if you see a yellow bubble in the left "gutter", that means if you hover over the code change, you'll get a pop-up further explaining the change. 
    
@@ -653,7 +642,7 @@ ollama launch --help
 9. Now actually launch one. **Claude Code is already installed here**, so a real coding agent starts - no Anthropic account, no API key.
 
    **Running locally:** Claude Code is not preinstalled on your machine. Either install it first
-   (`npm install -g @anthropic-ai/claude-code`, needs Node 18+ - local-setup.md step 6) or accept
+   (`npm install -g @anthropic-ai/claude-code`, needs Node 18+ - see local-setup.md) or accept
    `ollama launch`'s offer to set it up. Either way, no Anthropic account or API key is involved.
 
 ```

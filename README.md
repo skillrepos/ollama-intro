@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.7 - 09/04/26**
+**Revision 4.8 - 09/04/26**
 
 <br/>
 
@@ -15,10 +15,10 @@ Pick one. Everything in `labs.md` works either way.
 | **Option A - GitHub Codespace** | Nothing to install. Ollama, Python, the packages and the default model are already in the image. | The default. Use this unless you cannot. |
 | **Option B - Your own machine** | Install Ollama, Git and Python, and use your own editor. Windows, macOS or Linux. | No GitHub account, Codespaces blocked by policy, an offline room, or you just prefer local. |
 
-**Option A is covered below.** For **Option B**, follow **[local-setup.md](./local-setup.md)** - it walks
-through the installs per platform and lists the handful of codespace-specific commands in `labs.md` that
-need a local equivalent. `labs.md` also carries **Running locally:** notes at each step where the
-experience differs.
+**Both are covered below.** Option B is four installs and six commands. If you hit a snag - or want the
+per-platform detail, the codespace commands that need a local equivalent, or troubleshooting -
+**[local-setup.md](./local-setup.md)** has it. `labs.md` also carries **Running locally:** notes at each
+step where the experience differs.
 
 <br/>
 
@@ -83,8 +83,9 @@ You can either open it in a separate browser instance or open it in the codespac
 
 ## Option B - Setup on your own machine
 
-**Install four things, then run six commands.** Per-platform detail and troubleshooting live in
-**[local-setup.md](./local-setup.md)** - you should not need to read it unless something goes wrong.
+**Install four things, then run six commands.** That is the whole setup. Per-platform detail and
+troubleshooting live in **[local-setup.md](./local-setup.md)** - you should not need it unless something
+goes wrong.
 
 | Install | Where |
 | :-- | :-- |
