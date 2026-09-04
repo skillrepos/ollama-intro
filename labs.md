@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.14 - 09/04/26
+## Revision 6.15 - 09/04/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -747,11 +747,14 @@ python api/structured_output.py Fluxdash
 ```
 code api/structured_output.py
 ```
+
+![Updated schema](./images/ollama56.png?raw=true "Updated schema")
+
 ```
 python api/structured_output.py PostgreSQL
 ```
 
-![Updated schema](./images/ollama56.png?raw=true "Updated schema")
+![Updated schema run](./images/ollama62.png?raw=true "Updated schema run")
 
 <br><br>
 
