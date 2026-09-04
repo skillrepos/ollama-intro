@@ -665,7 +665,7 @@ ollama launch claude --model gpt-oss:120b-cloud
 ollama launch claude --model llama3.2:3b
 ```
 
-   It is a **warning, not a hard refusal** - press ESC to back out.
+   You might see a **warning** like the one below. If so, press ESC to back out. But whether it starts cleanly or not, it's important to realize that this small model is not a good fit since Claude Code requires much more power than this small model can deliver.
 
 ![The agent-capability gate](./images/ollama37.png?raw=true "The agent-capability gate")
 
