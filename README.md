@@ -66,10 +66,10 @@ The codespace is ready to use when you see output in the terminal similar to the
 
 ![Ready to use](./images/ollama53.png?raw=true "Ready to use")
 
-**4. If VS Code shows a workspace trust prompt, click *Trust*.**
+**4. If VS Code shows a workspace trust prompt, click *Trust Folder & Continue*.**
 
 The codespace may open in Restricted Mode with a banner asking whether you trust the authors
-of the files. Click **Trust** (or *Yes, I trust the authors*). 
+of the files. Click **Trust Folder & Continue**. 
 
 ![Trust workspace](./images/ollama48.png?raw=true "Trust workspace")
 
