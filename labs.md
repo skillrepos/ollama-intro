@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.15 - 09/04/26
+## Revision 6.16 - 09/09/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -450,7 +450,7 @@ curl -sS http://localhost:11434/api/generate -d '{
 
 <br><br>
 
-4. The `/api/generate` endpoint we were using has no memory. Another endpoint, `/api/chat`, takes a *messages* array instead which serves as "memory". Let's ask the **same question twice**, once cold and once with a conversation in front of it.
+4. The `/api/generate` endpoint we were using has no memory. Another endpoint, `/api/chat`, takes a *messages* array instead which serves as "memory". Let's ask the **same question twice**, once cold and once with a conversation in front of it. **After the process runs, look in the ` "messages": [ "content": ` section to see the answer. (See screenshot.)**
 
 ```
 curl -sS http://localhost:11434/api/chat -d '{
