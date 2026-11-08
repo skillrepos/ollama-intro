@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.16 - 09/09/26
+## Revision 6.17 - 11/08/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -25,7 +25,7 @@ After that, the steps below marked **Running locally:** are the only places your
 | | In the codespace | On your own machine |
 | :-- | :-- | :-- |
 | Repo location | `/workspaces/ollama-intro` | wherever you cloned it |
-| Opening and merging files | `code` and `code -d`, in the codespace's VS Code | any editor you like - `code -d` steps just need a side-by-side compare view |
+| Opening and merging files | `code` and `code -d`, in the codespace's VS Code | any editor you like - `code -d` steps need a side-by-side compare view |
 | Default model `llama3.2:3b` | already there | you pull it once, yourself |
 | Start / stop Ollama | `scripts/startOllama.sh` and `scripts/shutdown_ollama.sh` | the Ollama app, or `systemctl` on Linux |
 | Server log | `/tmp/ollama.log` | a per-OS path - see local-setup.md |
@@ -40,7 +40,9 @@ pipes, and the single-quoted JSON in the `curl` steps all behave differently in 
 
 **Labs 1 - 4 are in-class.** Lab 5 is optional if we have time or you can do it later. It covers two developer features we likely won't have time to try and troubleshooting commands you'll want when you are working on your own.
 
-**Lab 4 needs a free ollama.com account.** Creating one takes about a minute. Lab 1 ends with the step. **Just run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.** **Running locally:** any terminal will do.
+**Lab 4 needs an ollama.com account.** Creating one is free and takes about a minute. Lab 1 ends with the step. **Just run it before you reach Lab 4** (in a live session). **Signin must be run from the codespace terminal.** **Running locally:** any terminal will do.
+
+**Lab 4's cloud steps may cost a few cents.** Ollama's cloud charges per token. A free account includes a small monthly allowance for some models; if a cloud step says you need credits, you can add usage credits at https://ollama.com/settings, or watch the instructor run those steps. Everything else in this workshop runs on your machine at no cost.
 
 Steps marked **(Optional)** inside a lab are there for people who finish early. 
 
@@ -127,7 +129,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-6. The `>>>` prompt has its own set of commands, all starting with a `/`. Let's see them, then look at what this model actually is.
+6. The `>>>` prompt has its own set of commands, all starting with a `/`. Let's see them, then look at what this model is.
 
 ```
 /?
@@ -140,7 +142,7 @@ Why does that matter to a developer? Two sentences.
 
 <br><br>
 
-7. Let's look at **`num_predict`**. That one is a hard cap on how many tokens an answer may run to. Set it very low and ask a question that would normally get a long answer.
+7. Let's look at **`num_predict`**. That one is a hard cap on how many tokens an answer may run to. Set it low and ask a question that would normally get a long answer.
 
 ```
 /set parameter num_predict 20
@@ -165,7 +167,7 @@ Explain what a container image is.
 
 <br><br>
 
-8. Exit the session. `/bye` is the way out - typing "quit" or "exit" just sends those words to the model as a prompt.
+8. Exit the session. `/bye` is the way out - typing "quit" or "exit" sends those words to the model as a prompt.
 
 ```
 /bye
@@ -216,7 +218,7 @@ ollama signin
 - **`ollama pull` is the command you'll use most outside this workshop.** Models are stored as shared layers, so a second tag of something you already have downloads only the difference.
 - **The slowest prompt you ever send is the first one** - the weights have to be read off disk first. `api/warmup.py` pays that once; it is four lines of HTTP that you'll write by hand in Lab 3.
 - **`ollama list` shows what is on disk; `ollama ps` shows what is in memory.** Different questions. The *SIZE* column is a good first proxy for how much memory a model wants.
-- **`num_predict` is a hard stop, not a request for brevity.** The model never wraps up early - generation just halts. Your 200-token answer is very likely cut off too, just further along. For short *and* complete, ask for brevity in the prompt and keep the cap as a safety net.
+- **`num_predict` is a hard stop, not a request for brevity.** The model never wraps up early - generation halts. Your 200-token answer is likely cut off too, further along. For short *and* complete, ask for brevity in the prompt and keep the cap as a safety net.
 - **The interactive session is stateful; the server is not.** The CLI is holding your conversation and resending it every turn - which is what Lab 3 has you do yourself, in code. We'll bake `num_predict` and `temperature` into a model of our own in Lab 2.
 
 <p align="center">
@@ -226,7 +228,7 @@ ollama signin
 
 **Lab 2 - Choosing a model and customizing it**
 
-**Purpose: In this lab, we'll see what the numbers on a model actually mean, feel the size-versus-speed tradeoff first hand, then build our own customized model with a Modelfile.**
+**Purpose: In this lab, we'll see what the numbers on a model mean, feel the size-versus-speed tradeoff first hand, then build our own customized model with a Modelfile.**
 
 1. The same model info is available from the shell. Compare the *Model* blocks - *parameters*, *context length*, and *quantization*.
 
@@ -288,7 +290,7 @@ code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
 
    **Running locally:** you do not need VS Code. `code -d` opens a side-by-side compare - use your own
-   editor's equivalent (IntelliJ, Sublime Merge, BBEdit, Meld, `vimdiff`), or simply open both files and
+   editor's equivalent (IntelliJ, Sublime Merge, BBEdit, Meld, `vimdiff`), or open both files and
    copy across the blocks that are in the complete file but not the skeleton. `diff -u` in a terminal shows
    you which those are. Same for the merge step in Lab 3. (Using VS Code? Its `code` command has to be on
    your PATH - see local-setup.md.)
@@ -307,7 +309,7 @@ When done merging, click on the X at the top to close **and** save the merged ve
 
 <br><br>
 
-7. Build the model, then confirm it exists. This takes 15-30 seconds - it isn't retraining, just layering our instructions on existing weights.
+7. Build the model, then confirm it exists. This takes 15-30 seconds - it isn't retraining; it layers our instructions on existing weights.
 
 ```
 ollama create shellcoach -f modelfiles/Modelfile.shellcoach
@@ -358,7 +360,7 @@ ollama show --modelfile shellcoach
 
 12. (Optional) Two things to try if you finish early.
 
-   First, hand it a genuinely destructive command and watch the safety rule fire.
+   First, hand it a destructive command and watch the safety rule fire.
 
 ```
 ollama run shellcoach "How do I delete every .tmp file under /var/log?"
@@ -391,7 +393,7 @@ ollama run shellcoach "How do I delete every .tmp file under /var/log?"
 **What just happened**
 
 - **Parameters, context length, and quantization are most of model selection.** Parameters are roughly capability and memory appetite, context length is how much text the model considers at once, and quantization is precision traded for size - `Q4_K_M` is about 4 bits per weight.
-- **Quantization matters as much as parameter count.** The 3B ran 30-60% slower than the 1B, not 3x: on CPU, speed follows bytes read per token, and 3.2B x 4 bits against 1.2B x 8 bits is only ~1.3x the bytes. No ranking here, only a choice.
+- **Quantization matters as much as parameter count.** The 3B has almost 3x the parameters but ran only about 1.7x slower than the 1B (roughly 13 against 22 tokens per second in the codespace). Its weights are stored at 4 bits instead of 8, so there are fewer bytes to read for each token. No ranking here, only a choice.
 - **`SYSTEM` is prepended to every conversation; `MESSAGE` seeds a fake one.** That few-shot priming is where shellcoach's command-first code block comes from, and `num_predict 160` is why it stops while the base model rambles.
 - **Customization buys behavior, not knowledge.** Same weights underneath, so a mistake the base model makes (watch the `find -mtime` sign) shellcoach makes too. The `CAUTION:` rule fires on judgement and sometimes flags a harmless command.
 - **A customized model costs a Modelfile, not memory.** `shellcoach` shares blobs with `llama3.2:3b`, so `ollama ps` shows no separate entry. Share your few-line `Modelfile.shellcoach`, not the 200-line expansion.
@@ -563,7 +565,7 @@ python api/simple_langchain.py "What is the capital of France?"
 
 **Purpose: In this lab, we'll run a model far too large for this machine with the same commands and code, then point a real coding tool at Ollama with `ollama launch`.**
 
-**Note: this lab needs a free ollama.com account. If you ran the signin step at the end of Lab 1 you can skip step 1; if not, step 1 handles it.**
+**Note: this lab needs an ollama.com account. If you ran the signin step at the end of Lab 1 you can skip step 1; if not, step 1 handles it. Cloud models are billed per token - if a cloud step reports that you need credits, follow along with the instructor's screen.**
 
 1. Ollama Cloud runs large models on Ollama's hardware, behind the API you have been using. If you signed in at the end of Lab 1 this says so; otherwise it prints a URL to create a free account.
 
@@ -577,7 +579,7 @@ ollama signin
 
 2. Let's pull a cloud model to get it in our list of available models. Cloud models carry a `-cloud` tag, and pulling one downloads no weights at all.
 
-   **Cloud model names change frequently. If the name below is gone, open https://ollama.com/search?c=cloud and substitute any model whose tag ends in `-cloud`.**
+   **Cloud model names change frequently. If the name below is gone, open https://ollama.com/search?c=cloud and substitute any cloud model. Cloud tags end in `-cloud` (`gpt-oss:120b-cloud`) or are `:cloud` (`gemma4:cloud`).**
 
 ```
 ollama pull gpt-oss:120b-cloud
@@ -595,19 +597,19 @@ ollama list
 
 <br><br>
 
-4. Now run it - a 120-billion-parameter model, impossible to fit in this codespace. Note the command is identical to every other `ollama run` you have typed today.
+4. Now run it - a 120-billion-parameter model, impossible to fit in this codespace. Note the command is identical to every other `ollama run` you have typed.
 
 ```
 ollama run gpt-oss:120b-cloud "Compare a 3B local model with a 120B hosted model for a code review assistant. Be specific about where each one wins. Answer in under 120 words."
 ```
 
-   (The word limit matters - unbounded, this model writes two screens of tables.)
+   (The word limit matters - unbounded, this model writes two screens of tables.) The *Thinking...* block at the top is the model working through the question before it answers; add `--hidethinking` to the command to leave it out.
 
 ![Running a cloud-hosted model](./images/ollama33.png?raw=true "Running a cloud-hosted model")
 
 <br><br>
 
-5. It arrived **faster** than your local 3B despite being forty times larger - about 3 seconds against 14 - and is visibly better reasoned.
+5. It arrived **faster** than your local 3B despite being forty times larger - about a second in our test, against about 5 seconds for the 3B's one-sentence answer in Lab 2 - and it is visibly better reasoned.
 
 <br><br>
 
@@ -643,17 +645,17 @@ ollama launch --help
 
 <br><br>
 
-9. Now actually launch one. **Claude Code is already installed here**, so a real coding agent starts - no Anthropic account, no API key.
+9. Now launch one. **Claude Code is already installed here**, so a real coding agent starts - no Anthropic account, no API key.
 
    **Running locally:** Claude Code is not preinstalled on your machine. Either install it first
-   (`npm install -g @anthropic-ai/claude-code`, needs Node 18+ - see local-setup.md) or accept
+   (`curl -fsSL https://claude.ai/install.sh | bash` on macOS or Linux - see local-setup.md for Windows) or accept
    `ollama launch`'s offer to set it up. Either way, no Anthropic account or API key is involved.
 
 ```
 ollama launch claude --model gpt-oss:120b-cloud
 ```
 
-   **First launch runs Claude Code's own setup:** theme, Enter past the security notes, ESC past the terminal-setup offer, then **"Yes, I trust this folder"** - none of it an Anthropic login.
+   **First launch runs Claude Code's own setup:** theme, Enter past the security notes, ESC past the terminal-setup offer, then **"Yes, I trust this folder"** - none of it an Anthropic login. After your first question it may show a *Welcome to Claude Code for VS Code* panel; press Enter to continue.
 
 ![Claude Code running on an Ollama model](./images/ollama36.png?raw=true "Claude Code running on an Ollama model")
 
@@ -671,7 +673,7 @@ ollama launch claude --model llama3.2:3b
 
 <br><br>
 
-10. (Optional) The free tier covers light usage with limits that reset on a rolling window; everything else here runs locally at zero cost. Check usage at https://ollama.com/settings.  You can also sign out if you want with the command below.
+10. (Optional) Cloud models are billed per token, and a free account's small allowance resets monthly; everything else here runs locally at zero cost. Check your usage at https://ollama.com/settings/usage. You can also sign out if you want with the command below.
 
 ```
 ollama signout
@@ -683,7 +685,7 @@ ollama signout
 
 - **A `-cloud` tag registers a route, not weights.** Nothing landed on your disk and `ollama ps` stayed empty for it - your machine only forwarded the request to someone else's GPUs. The trade is your prompt leaving the machine.
 - **Local and hosted are one line apart** - same library, same call, same streaming loop, same history, only the model name changed. That is the argument for building against Ollama's API rather than a vendor SDK.
-- **`ollama launch` gates on the model, not the tool.** Driving an agent needs reliable tool calling, not just good prose - and an agent makes several round trips per question, the one thing that could eat your free tier.
+- **`ollama launch` gates on the model, not the tool.** Driving an agent needs reliable tool calling, not just good prose - and an agent makes several round trips per question, each one billed when the model is in the cloud.
 
 <p align="center">
 **[END OF LAB]**
@@ -784,7 +786,7 @@ python api/openai_compat.py
 
 <br><br>
 
-7. (Optional) A second route to Ollama Cloud: an API key against `https://ollama.com` directly, which is what you'd do from a server or a CI job. Create a key at https://ollama.com/settings/keys, then run the script - with no key it fails with a checklist of what is missing.
+7. (Optional) A second route to Ollama Cloud: an API key against `https://ollama.com` directly, which is what you'd do from a server or a CI job. Create a key at https://ollama.com/settings/keys, then run the script. With no key set, the script goes through your local server instead - that works if you signed in and pulled the cloud model in Lab 4; if anything is missing, it prints a checklist.
 
 ```
 export OLLAMA_API_KEY=your_key_here
@@ -844,7 +846,8 @@ ollama rm shellcoach
 
 **What just happened**
 
-- **Constrained output can force a confident answer where the honest one is "never heard of it."** The schema validates shape; truth is your job. Give the model a way out - a `"known": {"type": "boolean"}` field, or an `"unknown"` enum option - when you care about the difference.
+- **Constrained output can force a confident answer where the true answer is "never heard of it."** The schema validates shape; truth is your job. Give the model a way out - a `"known": {"type": "boolean"}` field, or an `"unknown"` enum option - when you care about the difference.
+- **Give every list in a schema a `maxItems`.** With an open-ended array, a small model can keep adding items and never finish the JSON. That is why `used_for` is capped at 4.
 - **`/v1` means most OpenAI code works by changing two things:** the base URL and the model name. Develop free and private against localhost, then point `base_url` at a hosted provider to ship.
 - **A "slow first prompt" is almost never a bug.** This codespace sets `OLLAMA_KEEP_ALIVE=-1`, which is why `ollama ps` says *Forever*. On your own machine the default is five minutes, after which the next prompt pays a reload.
 - **`keep_alive` is a JSON number you set per request:** `-1` pins a model, `0` unloads it on completion. A quoted `"-1"` is read as a duration, has no unit, and is rejected - `"30m"` and `"1h"` are the string forms. `ollama stop <model>` unloads one now.

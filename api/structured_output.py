@@ -23,7 +23,9 @@ SCHEMA = {
             "enum": ["language", "database", "framework", "tool", "other"],
         },
         "first_released": {"type": "integer"},
-        "used_for": {"type": "array", "items": {"type": "string"}},
+        # maxItems keeps the list short. Without a limit, a small model can
+        # keep adding items and never close the list.
+        "used_for": {"type": "array", "items": {"type": "string"}, "maxItems": 4},
     },
     "required": ["name", "category", "first_released", "used_for"],
 }
@@ -42,7 +44,8 @@ def describe(thing):
             ],
             "format": SCHEMA,
             "stream": False,
-            "options": {"temperature": 0},
+            # num_predict is a safety net, as in Lab 1: a hard stop on answer length.
+            "options": {"temperature": 0, "num_predict": 300},
         },
         timeout=300,
     )
@@ -63,8 +66,13 @@ if __name__ == "__main__":
     print(raw)
     print()
 
-    # Because we passed a schema, this parse should succeed every time.
-    parsed = json.loads(raw)
+    # Because we passed a schema, this parse should succeed. It can only fail
+    # if num_predict cut the answer off before the JSON was finished.
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        print("The answer was cut off before the JSON was complete (num_predict reached).")
+        sys.exit(1)
     print("Parsed as a real Python object:")
     # Driven off the parsed dict rather than a hard-coded field list, so that if
     # you add a property to SCHEMA (Lab 5 step 4) it shows up here too.

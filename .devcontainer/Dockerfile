@@ -2,11 +2,18 @@
 #
 # Everything here used to happen at codespace-creation time, in front of the
 # student. Baking it into the image moves that cost to a build you run once.
-# See IMAGEMAINTENANCE.md for when and how to rebuild.
 #
-# Build from the REPO ROOT (the COPY below needs requirements.txt):
+# Rebuild whenever you want a newer Ollama, Claude Code, or Python packages -
+# the install steps below always take the latest version. Codespaces keep
+# using the old image until you push a new one.
+#
+# Build from the REPO ROOT (the COPY below needs requirements.txt), then push:
 #   docker build --platform linux/amd64 -f .devcontainer/Dockerfile \
 #     -t ghcr.io/skillrepos/ollama-intro-devcontainer:latest .
+#   docker push ghcr.io/skillrepos/ollama-intro-devcontainer:latest
+#
+# After a rebuild, check that `ollama --version` in a new codespace shows the
+# version you expect.
 
 FROM mcr.microsoft.com/devcontainers/base:bookworm
 

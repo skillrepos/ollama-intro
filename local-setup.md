@@ -1,6 +1,6 @@
 # Running the labs without a Codespace - per-platform detail
 
-**Revision 1.3 - 09/04/26**
+**Revision 1.4 - 11/08/26**
 
 **Do the setup in [README.md](./README.md) - Option B first.** It is four installs and six commands, and
 for most people that is the whole job.
@@ -36,8 +36,9 @@ Everything below assumes a native install instead.
   and starts an `ollama` service. If yours is not systemd, run `ollama serve` in its own terminal and
   leave it there.
 
-`ollama --version` must report **0.15 or later** for Lab 4's `ollama launch` step. If the command is not
-found at all, close and reopen the terminal so it picks up the new PATH.
+`ollama --version` must report **0.15 or later** for Lab 4's `ollama launch` step; the codespace runs
+0.40, and the screenshots in `labs.md` come from it. If the command is not found at all, close and reopen
+the terminal so it picks up the new PATH.
 
 ### Git
 
@@ -74,7 +75,7 @@ and the step becomes a no-op.
 
 **You do not need VS Code.** Any editor works. The labs ask an editor to do two things:
 
-- **`code <file>`** - steps that just open a file to read or edit. Open it however you normally would.
+- **`code <file>`** - steps that open a file to read or edit. Open it however you normally would.
 - **`code -d <complete> <skeleton>`** - Labs 2 and 3 show a side-by-side diff and have you merge the left
   side into the right. Any compare view does this: VS Code, IntelliJ / PyCharm, Sublime Merge, BBEdit,
   Meld, `vimdiff`, `kdiff3`.
@@ -110,13 +111,19 @@ code --install-extension .devcontainer/merge-info-0.1.0.vsix
 ## Claude Code, for Lab 4 step 9
 
 `ollama launch claude` starts Claude Code against an Ollama model. The codespace image preinstalls it; on
-your own machine, `npm install -g @anthropic-ai/claude-code` (needs Node.js 18+). Recent Ollama versions
-may offer to set it up for you when it is missing, but installing it first matches the codespace and takes
-the uncertainty out of a live step.
+your own machine, install it with Anthropic's installer:
 
-Skip it and `ollama launch --help` in step 8 still works - you just cannot complete step 9. **No Anthropic
+- **macOS / Linux / WSL** - `curl -fsSL https://claude.ai/install.sh | bash`
+- **Windows PowerShell** - `irm https://claude.ai/install.ps1 | iex`
+
+(`npm install -g @anthropic-ai/claude-code` also works if you already have Node.js 18+.) Ollama may offer
+to set it up for you when it is missing, but installing it first matches the codespace and takes the
+uncertainty out of a live step.
+
+Skip it and `ollama launch --help` in step 8 still works - you cannot complete step 9. **No Anthropic
 account or API key is needed either way** - `ollama launch` points Claude Code at your local server. The
-command needs **Ollama 0.15 or later** and currently drives Claude Code, OpenCode, Codex, VS Code and Droid.
+command needs **Ollama 0.15 or later**. The list of tools it can start grows with each release -
+`ollama launch --help` shows the current one.
 
 <br/>
 
@@ -161,7 +168,7 @@ runs in - not the terminal you type in:
 | `time: command not found` (Lab 2 step 2) | You are in PowerShell or cmd. Use Git Bash or WSL |
 | Multi-line `curl` in Lab 3 errors out | Same cause - PowerShell parses the single-quoted JSON differently. Use Git Bash or WSL |
 | `address already in use` on 11434 | An Ollama server is already running. Stop it (see the equivalents table) before starting another |
-| First prompt is very slow, every time | The model unloaded after 5 minutes. Pin it with `OLLAMA_KEEP_ALIVE=-1` above, or re-run `python api/warmup.py` |
+| First prompt is slow, every time | The model unloaded after 5 minutes. Pin it with `OLLAMA_KEEP_ALIVE=-1` above, or re-run `python api/warmup.py` |
 | Answers are much slower than the quoted times | Those figures come from a 4-core CPU-only codespace. Your machine may be faster or slower; long answers scale with length either way |
 
 <br/>

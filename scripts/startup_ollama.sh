@@ -2,8 +2,8 @@
 # startup_ollama.sh - bring Ollama up at codespace creation time.
 #
 # With the prebuilt image this is nearly a no-op: the binary is already
-# installed and both workshop models are already in /opt/ollama-models. All
-# that is left is starting the server and warming the default model.
+# installed and the default model (llama3.2:3b) is already in
+# /opt/ollama-models. All that is left is starting the server and warming it.
 #
 # Every install/pull below is CONDITIONAL so that this script still works on a
 # plain base image (a fork, or a local Dev Container build). Do not make any of

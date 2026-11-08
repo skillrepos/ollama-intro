@@ -2,8 +2,8 @@
 #
 # These are pre-installed into /opt/py_env when the dev container image is
 # built. Changing this file means the image must be rebuilt and pushed - see
-# IMAGEMAINTENANCE.md. scripts/pysetup.sh only installs from here on the
-# fallback path, when no prebuilt environment is present.
+# the top of .devcontainer/Dockerfile. scripts/pysetup.sh only installs from
+# here on the fallback path, when no prebuilt environment is present.
 
 # --- The official Ollama Python library (Lab 3: api/chat_app.py) ---
 ollama>=0.6.2

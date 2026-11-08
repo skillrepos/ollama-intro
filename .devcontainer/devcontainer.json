@@ -1,7 +1,7 @@
 {
     "name": "Ollama workshop (prebuilt image - fast)",
 
-    // Prebuilt image - see .devcontainer/Dockerfile and IMAGEMAINTENANCE.md.
+    // Prebuilt image - see .devcontainer/Dockerfile for how to rebuild and push it.
     // Everything slow (OS packages, Node, Claude Code, the Python venv, the
     // Ollama binary, and the default llama3.2:3b model) is already inside it.
     //

@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.8 - 09/04/26**
+**Revision 4.9 - 11/08/26**
 
 <br/>
 
@@ -13,7 +13,7 @@ Pick one. Everything in `labs.md` works either way.
 | | | Best when |
 | :-- | :-- | :-- |
 | **Option A - GitHub Codespace** | Nothing to install. Ollama, Python, the packages and the default model are already in the image. | The default. Use this unless you cannot. |
-| **Option B - Your own machine** | Install Ollama, Git and Python, and use your own editor. Windows, macOS or Linux. | No GitHub account, Codespaces blocked by policy, an offline room, or you just prefer local. |
+| **Option B - Your own machine** | Install Ollama, Git and Python, and use your own editor. Windows, macOS or Linux. | No GitHub account, Codespaces blocked by policy, an offline room, or you prefer local. |
 
 **Both are covered below.** Option B is four installs and six commands. If you hit a snag - or want the
 per-platform detail, the codespace commands that need a local equivalent, or troubleshooting -
@@ -24,13 +24,17 @@ step where the experience differs.
 
 ## Before you start
 
-**Everything in this workshop is free.** No paid API keys, no credit card. Labs 1 - 3 run entirely on local
-models, wherever you run them.
+**Labs 1 - 3 and Lab 5 cost nothing.** They run entirely on local models, wherever you run them. No API
+keys, no credit card.
 
-**Lab 4 uses a large cloud-hosted model, which needs a free ollama.com account.** Creating one takes about a
-minute. You do not need it to start - Lab 1 ends with a one-command `ollama signin` step, and Lab 4 will
-prompt you if you skipped it. But if you would rather not spend workshop time on a signup form, create the
-account ahead of time at https://ollama.com.
+**Lab 4 uses a large cloud-hosted model, which needs an ollama.com account.** The account is free and takes
+about a minute to create. You do not need it to start - Lab 1 ends with a one-command `ollama signin` step,
+and Lab 4 will prompt you if you skipped it. But if you would rather not spend workshop time on a signup
+form, create the account ahead of time at https://ollama.com.
+
+**Ollama's cloud charges per token.** A free account includes a small monthly allowance for some cloud
+models. If Lab 4 reports that you need credits, you can add usage credits at https://ollama.com/settings -
+the whole lab uses a few cents - or follow along on the instructor's screen.
 
 If your organization blocks account creation on external sites, that is fine - Lab 4 is the only lab that
 needs it, and you can follow along without signing in.
@@ -89,7 +93,7 @@ goes wrong.
 
 | Install | Where |
 | :-- | :-- |
-| **Ollama 0.15 or later** - 0.15 is the minimum for Lab 4's `ollama launch` | https://ollama.com/download |
+| **Ollama, current version** - the codespace runs 0.40; 0.15 is the minimum for Lab 4's `ollama launch` | https://ollama.com/download |
 | **Git** - on Windows this also installs **Git Bash**, which you want | https://git-scm.com/downloads |
 | **Python 3.10 or later** - tick *Add python.exe to PATH* on Windows | https://www.python.org/downloads/ |
 | **Any editor you already like** - you need one that can show two files side by side for the two merge steps. VS Code is what the labs show; anything with a compare view works | https://code.visualstudio.com/download |
@@ -114,13 +118,13 @@ Three things worth knowing before you begin:
 
 - **On Windows, run the lab commands in Git Bash or WSL** - not PowerShell or cmd. The labs use `time`,
   pipes, and single-quoted JSON on `curl`, all of which behave differently there.
-- **Lab 4 step 9 also wants Claude Code** - `npm install -g @anthropic-ai/claude-code`, which needs
-  Node 18+. Every other step works without it.
+- **Lab 4 step 9 also wants Claude Code** - `curl -fsSL https://claude.ai/install.sh | bash` on macOS or
+  Linux (Windows: see local-setup.md). Every other step works without it.
 - **Already running Docker Desktop?** Install the VS Code *Dev Containers* extension, open this repo and
   choose **Reopen in Container**. You get the codespace image with none of the above to install.
 
 **Requirements:** about 6 GB of free disk and 8 GB of RAM. **No GPU needed** - the labs are written for
-CPU-only machines, which is exactly what a codespace is. A GPU just makes everything faster.
+CPU-only machines, which is exactly what a codespace is. A GPU makes everything faster.
 
 <br/>
 
