@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.19 - 11/09/26
+## Revision 6.20 - 11/09/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -9,9 +9,11 @@
 
 **NOTE: Run every command from the root of the repository unless a step says otherwise. You can always get back there with `cd /workspaces/ollama-intro`.**
 
+> 💻 **Running locally:** use the folder you cloned the repo into instead of `/workspaces/ollama-intro`. On Windows, run the lab commands in Git Bash or WSL, not PowerShell.
+
 **NOTE: This is a CPU-only codespace. A short answer from `llama3.2:3b` takes about 4 - 6 seconds; long answers take longer. That is normal.**
 
-**Running on your own machine instead?** Do the setup in [README.md](./README.md) - Option B, and keep [local-setup.md](./local-setup.md) open. Its *Lab by lab* section lists every step that works differently outside the codespace.
+**Running on your own machine instead?** Do the setup in [README.md](./README.md) - Option B. Steps that work differently on your machine have a **Running locally** box; [local-setup.md](./local-setup.md) has more detail.
 
 **Labs 1 - 4 are in-class.** Lab 5 is optional if we have time, or you can do it later. Steps marked **(Optional)** are for people who finish early.
 
@@ -53,6 +55,8 @@ ollama list
 
 ![Listing installed models](./images/ollama7.png?raw=true "Listing installed models")
 
+> 💻 **Running locally:** `llama3.2:3b` is not preinstalled. If it isn't in your list, run `ollama pull llama3.2:3b` too.
+
 <br><br>
 
 3. Load both models into memory now, so later steps don't have to wait for it.
@@ -64,6 +68,8 @@ python api/warmup.py
 ![Warming up the models](./images/ollama6.png?raw=true "Warming up the models")
 
    If it says it could not reach Ollama, run `bash scripts/startOllama.sh` and try again.
+
+> 💻 **Running locally:** `startOllama.sh` is for the codespace. Start Ollama yourself instead: open the Ollama app (macOS, Windows), or run `ollama serve` in a separate terminal (Linux).
 
 <br><br>
 
@@ -170,6 +176,8 @@ ollama signin
 
 ![Signing in to ollama.com](./images/ollama13.png?raw=true "Signing in to ollama.com")
 
+> 💻 **Running locally:** run it from any terminal.
+
 <p align="center">
 **[END OF LAB]**
 </p>
@@ -203,6 +211,8 @@ time ollama run llama3.2:3b "What is a vector embedding? One sentence."
 
 ![Comparing model sizes and speed](./images/ollama15.png?raw=true "Comparing model sizes and speed")
 
+> 💻 **Running locally:** your times depend on your hardware and will differ from the screenshot. Compare the two models with each other.
+
 <br><br>
 
 3. Look at the Modelfile behind Llama 3.2: the `FROM` line, the `TEMPLATE` block, and the `PARAMETER stop` lines. (What follows is license text.)
@@ -230,6 +240,8 @@ code modelfiles/Modelfile.shellcoach
 ```
 code -d extra/Modelfile-shellcoach-complete.txt modelfiles/Modelfile.shellcoach
 ```
+
+> 💻 **Running locally:** `code -d` needs VS Code's `code` command on your PATH (VS Code: *Shell Command: Install 'code' command in PATH*). Any editor's compare view works too.
 
    The left side is the complete file; the right side is your starter file. For each of the three change blocks, hover over the middle bar and click the arrow to copy the change across. A yellow bubble in the left margin means you can hover over that change for an explanation.
 
@@ -556,6 +568,8 @@ ollama launch --help
 ollama launch claude --model gpt-oss:120b-cloud
 ```
 
+> 💻 **Running locally:** Claude Code is not preinstalled. Install it first with `curl -fsSL https://claude.ai/install.sh | bash` (macOS, Linux), or accept `ollama launch`'s offer to set it up.
+
    The first launch asks a few setup questions: pick a theme, press Enter past the security notes, press ESC to skip terminal setup, then choose **Yes, I trust this folder**. If a *Welcome to Claude Code for VS Code* panel appears, press Enter.
 
 ![Claude Code running on an Ollama model](./images/ollama36.png?raw=true "Claude Code running on an Ollama model")
@@ -600,6 +614,8 @@ ollama signout
 **Purpose: Get JSON you can rely on, run OpenAI code against Ollama, and learn the commands to use when something breaks.**
 
 **Models stay loaded in this codespace, so there is nothing to warm up.**
+
+> 💻 **Running locally:** models unload after 5 idle minutes, so run `python api/warmup.py` first or your first answer will be slow.
 
 1. With structured output, you send a JSON Schema and the answer must match it. Open the script and look at `SCHEMA`. `maxItems` keeps the `used_for` list from growing without end.
 
@@ -698,6 +714,8 @@ curl -sS http://localhost:11434/api/tags > /dev/null && echo "Ollama is up" || e
 tail -30 /tmp/ollama.log
 ```
 
+> 💻 **Running locally:** the log is somewhere else. macOS: `cat ~/.ollama/logs/server.log`. Linux: `journalctl -e -u ollama`. Windows: `server.log` in `%LOCALAPPDATA%\Ollama`.
+
 ![Running cloud chat with key](./images/ollama60.png?raw=true "Running cloud chat with key")
 
 <br><br>
@@ -710,6 +728,8 @@ bash scripts/shutdown_ollama.sh
 ```
 bash scripts/startOllama.sh
 ```
+
+> 💻 **Running locally:** these scripts are for the codespace. Quit Ollama from the menu bar (macOS) or system tray (Windows) and open it again. Linux: `sudo systemctl restart ollama`.
 
 <br><br>
 

@@ -1,6 +1,6 @@
 # Running the labs without a Codespace - per-platform detail
 
-**Revision 1.5 - 11/09/26**
+**Revision 1.6 - 11/09/26**
 
 **Do the setup in [README.md](./README.md) - Option B first.** It is four installs and six commands, and
 for most people that is the whole job.
@@ -130,7 +130,8 @@ command needs **Ollama 0.15 or later**. The list of tools it can start grows wit
 ## Lab by lab
 
 `labs.md` is written for the codespace. Every `ollama` command, every `curl`, and every `python api/...`
-program runs unchanged on your machine. These are the only steps that work differently.
+program runs unchanged on your machine. These are the only steps that work differently; each one also has a
+💻 **Running locally** box in `labs.md`.
 
 **On Windows, run the lab commands in Git Bash or WSL, not PowerShell or cmd.** The `time` command, the
 pipes, and the single-quoted JSON in the `curl` steps all behave differently in PowerShell.
