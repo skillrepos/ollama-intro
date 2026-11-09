@@ -1,7 +1,7 @@
 # Getting Started with Ollama
 ## Running and using local LLMs 
 ## Session labs
-## Revision 6.18 - 11/09/26
+## Revision 6.19 - 11/09/26
 
 **Follow the startup instructions in the README.md file IF NOT ALREADY DONE!**
 
@@ -446,6 +446,9 @@ How would I work around that?
 
 ![Multi-turn conversation with history](./images/ollama28.png?raw=true "Multi-turn conversation with history")
 
+
+(You can use `Ctrl+C` to exit the application.)
+
 <br><br>
 
 10. (Optional) The same kind of chat through the LangChain framework. Open the code, then run it.
@@ -532,6 +535,8 @@ In two sentences, what is a race condition?
 ```
 
 ![The same app against a cloud model](./images/ollama34.png?raw=true "The same app against a cloud model")
+
+(You can use `Ctrl+C` to exit the application.)
 
 <br><br>
 
