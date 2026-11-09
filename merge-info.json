@@ -45,7 +45,7 @@
         "title": "The app's entire memory",
         "note": [
           "**This one line is the whole \"memory\" of the app - Ollama itself stores nothing.**",
-          "- Step 10 comments it out to prove exactly that",
+          "- Without it, the model never sees its own earlier answers",
           "- Removing it drops only what the *model* said; your own turns stay"
         ]
       }

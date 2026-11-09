@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.9 - 11/08/26**
+**Revision 4.10 - 11/09/26**
 
 <br/>
 
@@ -17,8 +17,8 @@ Pick one. Everything in `labs.md` works either way.
 
 **Both are covered below.** Option B is four installs and six commands. If you hit a snag - or want the
 per-platform detail, the codespace commands that need a local equivalent, or troubleshooting -
-**[local-setup.md](./local-setup.md)** has it. `labs.md` also carries **Running locally:** notes at each
-step where the experience differs.
+**[local-setup.md](./local-setup.md)** has it. Its *Lab by lab* section lists every lab step that works
+differently on your own machine.
 
 <br/>
 

@@ -1,12 +1,12 @@
 # Running the labs without a Codespace - per-platform detail
 
-**Revision 1.4 - 11/08/26**
+**Revision 1.5 - 11/09/26**
 
 **Do the setup in [README.md](./README.md) - Option B first.** It is four installs and six commands, and
 for most people that is the whole job.
 
-This file is what sits behind those installs: the per-platform specifics, the handful of codespace
-commands in `labs.md` that need a local equivalent, and what to do when something breaks. Read the
+This file is what sits behind those installs: the per-platform specifics, the steps in `labs.md` that
+work differently on your machine (*Lab by lab*), and what to do when something breaks. Read the
 section that matches your problem - it is not meant to be read front to back.
 
 <br/>
@@ -127,21 +127,27 @@ command needs **Ollama 0.15 or later**. The list of tools it can start grows wit
 
 <br/>
 
-## Codespace commands and their local equivalents
+## Lab by lab
 
-`labs.md` is written for the codespace. These are the only places that matters - it also flags each one
-inline, as a **Running locally:** note at the step itself.
+`labs.md` is written for the codespace. Every `ollama` command, every `curl`, and every `python api/...`
+program runs unchanged on your machine. These are the only steps that work differently.
 
-| `labs.md` says | On your machine |
-| :-- | :-- |
-| `cd /workspaces/ollama-intro` | `cd` to wherever you cloned the repo |
-| `bash scripts/startOllama.sh` <br/>(Lab 1 step 3, Lab 5 step 9) | **Windows/macOS:** the Ollama app starts the server - launch it from the tray or menu bar. <br/>**Linux:** `sudo systemctl start ollama`, or `ollama serve` in its own terminal |
-| `bash scripts/shutdown_ollama.sh` <br/>(Lab 5 step 9) | **Windows:** quit Ollama from the system tray. <br/>**macOS:** quit it from the menu bar. <br/>**Linux:** `sudo systemctl stop ollama` |
-| `tail -30 /tmp/ollama.log` <br/>(Lab 5 step 8) | **macOS:** `cat ~/.ollama/logs/server.log` <br/>**Linux:** `journalctl -e -u ollama` <br/>**Windows:** `explorer %LOCALAPPDATA%\Ollama` - most recent is `server.log` |
-| "This codespace pins models in memory" <br/>(Lab 5 intro) | Locally the default is **5 minutes**, then the model unloads and the next prompt pays a reload. Run `python api/warmup.py` again, or pin them - see below |
+**On Windows, run the lab commands in Git Bash or WSL, not PowerShell or cmd.** The `time` command, the
+pipes, and the single-quoted JSON in the `curl` steps all behave differently in PowerShell.
 
-Everything else in `labs.md` - every `ollama` command, every `curl`, every `python api/...` program - runs
-unchanged.
+| Where in `labs.md` | In the codespace | On your machine |
+| :-- | :-- | :-- |
+| Every lab - the repo folder | `cd /workspaces/ollama-intro` | `cd` to wherever you cloned the repo |
+| Lab 1 step 2 | `llama3.2:3b` is already there | If `ollama list` is empty, run `ollama pull llama3.2:3b` first - step 3 fails without it |
+| Lab 1 step 3, Lab 5 step 9 - start Ollama | `bash scripts/startOllama.sh` | **Windows/macOS:** launch the Ollama app from the tray or menu bar. **Linux:** `sudo systemctl start ollama`, or `ollama serve` in its own terminal |
+| Lab 1 step 12 - `ollama signin` | the codespace terminal | any terminal |
+| Lab 2 step 2 - `time` | works as shown | Use Git Bash or WSL on Windows. Your times will differ from the screenshot; compare the two models with each other |
+| Lab 2 step 5, Lab 3 step 7 - `code -d` merges | VS Code's compare view | Any editor's compare view - see *An editor for the merge steps* above |
+| Lab 4 step 9 - Claude Code | preinstalled | Install it first (see *Claude Code, for Lab 4 step 9* above), or accept `ollama launch`'s offer to set it up |
+| Lab 5 - models staying loaded | pinned with `OLLAMA_KEEP_ALIVE=-1` | Models unload after 5 idle minutes, so the next prompt is slow. Run `python api/warmup.py` first, or pin them - see below |
+| Lab 5 step 8 - server log | `tail -30 /tmp/ollama.log` | **macOS:** `cat ~/.ollama/logs/server.log` <br/>**Linux:** `journalctl -e -u ollama` <br/>**Windows:** `explorer %LOCALAPPDATA%\Ollama` - the newest file is `server.log` |
+| Lab 5 step 9 - stop Ollama | `bash scripts/shutdown_ollama.sh` | **Windows:** quit Ollama from the system tray. **macOS:** quit it from the menu bar. **Linux:** `sudo systemctl stop ollama` |
+| Speed | CPU only: 4 - 6 seconds for a short answer | Your hardware - a GPU is much faster |
 
 ### Pinning models in memory
 
@@ -167,7 +173,7 @@ runs in - not the terminal you type in:
 | `ModuleNotFoundError: No module named 'ollama'` | The virtual environment is not active. Re-run the activate command for your platform |
 | `time: command not found` (Lab 2 step 2) | You are in PowerShell or cmd. Use Git Bash or WSL |
 | Multi-line `curl` in Lab 3 errors out | Same cause - PowerShell parses the single-quoted JSON differently. Use Git Bash or WSL |
-| `address already in use` on 11434 | An Ollama server is already running. Stop it (see the equivalents table) before starting another |
+| `address already in use` on 11434 | An Ollama server is already running. Stop it (see *Lab by lab*, Lab 5 step 9) before starting another |
 | First prompt is slow, every time | The model unloaded after 5 minutes. Pin it with `OLLAMA_KEEP_ALIVE=-1` above, or re-run `python api/warmup.py` |
 | Answers are much slower than the quoted times | Those figures come from a 4-core CPU-only codespace. Your machine may be faster or slower; long answers scale with length either way |
 
