@@ -32,9 +32,7 @@ about a minute to create. You do not need it to start - Lab 1 ends with a one-co
 and Lab 4 will prompt you if you skipped it. But if you would rather not spend workshop time on a signup
 form, create the account ahead of time at https://ollama.com.
 
-**Ollama's cloud charges per token.** A free account includes a small monthly allowance for some cloud
-models. If Lab 4 reports that you need credits, you can add usage credits at https://ollama.com/settings -
-the whole lab uses a few cents - or follow along on the instructor's screen.
+**Ollama's cloud charges per token.** A free account now requires credits to run the cloud models. You can choose whether or not to add credits. Credits can be added at https://ollama.com/dashboard - the whole lab uses a few cents, but the minimum value you can add is $5.
 
 If your organization blocks account creation on external sites, that is fine - Lab 4 is the only lab that
 needs it, and you can follow along without signing in.
