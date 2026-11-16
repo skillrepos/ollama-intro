@@ -2,7 +2,7 @@
 
 Repository for the *Getting Started with Ollama* hands-on workshop - running and using local LLMs.
 
-**Revision 4.11 - 11/09/26**
+**Revision 4.12 - 11/16/26**
 
 <br/>
 
